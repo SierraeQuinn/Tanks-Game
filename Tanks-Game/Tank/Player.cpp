@@ -1,0 +1,132 @@
+﻿#include "Player.h"
+#include "LevelScreen.h"
+#include <SFML/Graphics.hpp>
+#include <iostream>
+#define _USE_MATH_DEFINES
+#include <cmath>
+
+// When using forward declarations in the .h, must actually do the #include in the .cpp
+#include "LevelScreen.h"
+
+
+Player::Player(sf::Vector2f pos, LevelScreen* newLevel, sf::Texture* tankTexture, sf::Texture* gunTexture)
+	: arrowTexture("Assets/tank_arrowFull.png")
+	, baseSprite(*tankTexture)
+	, gunSprite(*gunTexture)
+	, arrowSprite(arrowTexture)
+	, angle(90.0f)
+	, strength(1.0f)
+	, firingSpeed(500.0f)
+	, fireCooldown(0.2f)
+	, timeSinceFire(0.2f)
+	, level(newLevel)
+{
+	baseSprite.setOrigin(baseSprite.getGlobalBounds().size * 0.5f);
+	baseSprite.setPosition(pos);
+	gunSprite.setOrigin({0, static_cast<float>( gunTexture->getSize().y/2)});
+	gunSprite.setPosition(pos - sf::Vector2f(0,15));
+	gunSprite.setRotation(sf::degrees(-0.0f));
+	arrowSprite.setOrigin({ -100, arrowSprite.getGlobalBounds().size.y /2 });
+	arrowSprite.setPosition(pos);
+	arrowSprite.setRotation(sf::degrees(-90.0f));
+}
+
+void Player::DrawTo(sf::RenderTarget& target)
+{
+	target.draw(gunSprite);
+	target.draw(baseSprite);
+	target.draw(arrowSprite);
+}
+
+void Player::Update(float frameTime)
+{
+
+	if (!isActive)
+		return; // 🚫 Don't update if it's not this player's turn
+
+	const float ANGLE_SPEED = 90.0f;
+	const float STRENGTH_SPEED = 1.0f;
+
+	timeSinceFire += frameTime;
+
+	// Input handling
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)
+		&& timeSinceFire >= fireCooldown)
+	{
+		// Reset the time since firing
+		timeSinceFire = 0.0f;
+
+		
+		Fire();
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
+	{
+		// Decrease Angle
+		AngleChange(-ANGLE_SPEED * frameTime);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
+	{
+		// Increase Angle
+		AngleChange(ANGLE_SPEED * frameTime);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
+	{
+		// Increase Strength
+		StrengthChange(STRENGTH_SPEED * frameTime);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
+	{
+		// Decrease Strength
+		StrengthChange(-STRENGTH_SPEED * frameTime);
+	}
+}
+
+void Player::Fire()
+{
+	// 1) Get the sprite’s current rotation as an sf::Angle
+	sf::Angle rot = gunSprite.getRotation();
+
+	// 2) Derive a float barrel length
+	float barrelLength = 40.f;
+	if (gunTexture)
+		barrelLength = static_cast<float>(gunTexture->getSize().x);
+
+	// 3) Build a unit vector from the angle
+	float rad = rot.asRadians();
+	sf::Vector2f direction{ std::cos(rad), std::sin(rad) };
+
+	// 4) Compute barrel‐tip world pos
+	sf::Vector2f bulletPos = gunSprite.getPosition() + direction * barrelLength;
+
+	// 5) Spawn using the *float* degrees for Bullet’s constructor
+	float deg = rot.asDegrees();
+	level->SpawnBullet(bulletPos, strength * firingSpeed, deg);
+
+	level->SwitchTurn();
+}
+
+void Player::AngleChange(float deltaAngle)
+{
+	angle += deltaAngle;
+	const float LOW_LIMIT = -90.0f;
+	const float UP_LIMIT = 90.0f;
+	if (angle < LOW_LIMIT) angle = LOW_LIMIT;
+	if (angle > UP_LIMIT) angle = UP_LIMIT;
+
+	// Update sprites
+	gunSprite.setRotation(sf::degrees(angle - 90.0f));
+	arrowSprite.setRotation(sf::degrees(angle - 90.0f));
+}
+
+void Player::StrengthChange(float deltaStrength)
+{
+	strength += deltaStrength;
+	const float LOW_LIMIT = 0.75f;
+	const float UP_LIMIT = 1.5f;
+	if (strength < LOW_LIMIT) strength = LOW_LIMIT;
+	if (strength > UP_LIMIT) strength = UP_LIMIT;
+
+	// Update sprites
+	arrowSprite.setScale({ strength, strength });
+
+}
