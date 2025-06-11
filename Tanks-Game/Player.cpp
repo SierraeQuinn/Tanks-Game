@@ -28,7 +28,7 @@ Player::Player(sf::Vector2f pos, LevelScreen* newLevel, sf::Texture* tankTexture
 	gunSprite.setRotation(sf::degrees(-0.0f));
 	arrowSprite.setOrigin({ -100, arrowSprite.getGlobalBounds().size.y /2 });
 	arrowSprite.setPosition(pos);
-	arrowSprite.setRotation(sf::degrees(-90.0f));
+	arrowSprite.setRotation(sf::degrees(0.0f));
 }
 
 void Player::DrawTo(sf::RenderTarget& target)
@@ -38,7 +38,7 @@ void Player::DrawTo(sf::RenderTarget& target)
 	target.draw(arrowSprite);
 }
 
-void Player::Update(float frameTime)
+void Player:: Update(float frameTime)
 {
 
 	if (!isActive)
@@ -56,7 +56,7 @@ void Player::Update(float frameTime)
 		// Reset the time since firing
 		timeSinceFire = 0.0f;
 
-		
+
 		Fire();
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
@@ -80,6 +80,7 @@ void Player::Update(float frameTime)
 		StrengthChange(-STRENGTH_SPEED * frameTime);
 	}
 }
+
 
 void Player::Fire()
 {
@@ -129,4 +130,12 @@ void Player::StrengthChange(float deltaStrength)
 	// Update sprites
 	arrowSprite.setScale({ strength, strength });
 
+}
+void Player::SetAngle(float newAngle)
+{
+	angle = newAngle;
+
+	// Re-apply exactly the same rotation math you do in the ctor:
+	gunSprite.setRotation(sf::degrees(angle - 90.0f));
+	arrowSprite.setRotation(sf::degrees(angle - 90.0f));
 }

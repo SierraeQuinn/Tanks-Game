@@ -44,6 +44,6 @@ private:
 	bool ismyPlayerTurn = true;
 	float timeSinceSpawn;
 	float spawnCooldown;
-	//BasicEnemy* tempEnemy;
+
 
 };

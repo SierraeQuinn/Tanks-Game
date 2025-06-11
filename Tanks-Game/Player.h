@@ -20,6 +20,7 @@ public:
 	void DrawTo(sf::RenderTarget& target);
 	void Update(float frameTime);
 	void SetActive(bool active) { isActive = active; }
+	void SetAngle(float newAngle);
 
 private:
 

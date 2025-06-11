@@ -1,4 +1,7 @@
 #include "LevelScreen.h"
+#include "Player.h"
+#include "Bullet.h"
+#include <SFML/Graphics.hpp>
 #include <string> 
 
 LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
@@ -16,6 +19,8 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	, spawnCooldown(1.0f)
 
 	, gunTexture("Assets/tanks_turret1.png")
+	, ismyPlayerTurn(true)   // enforce start turn here
+	
 {
 
 
@@ -31,21 +36,27 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	myPlayer = new Player(
 		{ 100.0f, bottomThirdY },
 		this, &tankTextures[0], &gunTexture);
+	// Default actor sets angle = 90, so faces right already.
 
 	myPlayer2 = new Player(
 		{ screenSize.x - 100.0f, bottomThirdY },
 		this, &tankTextures[1], &gunTexture);
+	// Immediately flip it to face left (–90° = left in your system)
+	myPlayer2->SetAngle(-90.0f);
+
+	myPlayer->SetActive(true);
+	myPlayer2->SetActive(false);
 }
 
 	
 
 LevelScreen::~LevelScreen()
 {
-
+	delete myPlayer;
+	delete myPlayer2;
 	for (int i = 0; i < bullets.size(); ++i)
 	{
-		delete myPlayer;
-		delete myPlayer2;
+		
 
 		for (int i = 0; i < bullets.size(); ++i)
 		{
@@ -68,7 +79,7 @@ void LevelScreen::DrawTo(sf::RenderTarget& target)
 
 	// UI
 	target.draw(healthText);
-}
+} 
 
 void LevelScreen::Update(float frameTime)
 {// ?? Update only the active player
@@ -97,15 +108,15 @@ void LevelScreen::Update(float frameTime)
 	}
 
 
-	
+
 }
 
 void LevelScreen::SwitchTurn()
 {
 	ismyPlayerTurn = !ismyPlayerTurn;
 
-	myPlayer->SetActive(ismyPlayerTurn);
-	myPlayer2->SetActive(!ismyPlayerTurn);
+	//myPlayer->SetActive(ismyPlayerTurn);
+	//myPlayer2->SetActive(!ismyPlayerTurn);
 }
 
 Bullet* LevelScreen::SpawnBullet(sf::Vector2f pos, float speed, float angle)
