@@ -16,7 +16,7 @@ public:
 
 	// Public Functions
 	void DrawTo(sf::RenderTarget& target);
-	void Update(float frameTime);
+	void Update(float deltaTime);
 	bool IsOnScreen() const;
 	
 	// Data

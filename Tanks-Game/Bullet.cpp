@@ -22,17 +22,25 @@ Bullet::Bullet(sf::Texture& bulletTex,
     // calculate movement vector: convert deg?rad
     float rad = firingAngle * PI / 180.f;
     velocity.x = std::cos(rad) * firingSpeed;
-    velocity.y = std::sin(rad) * firingSpeed;  // no negative; SFML’s sin goes down for +Y
+    velocity.y = std::sin(rad) * firingSpeed;  // down is positive in SFML
 }
 
 void Bullet::DrawTo(sf::RenderTarget& target)
 {
+
 	target.draw(sprite);
 }
 
-void Bullet::Update(float frameTime)
+void Bullet::Update(float deltaTime)
 {
-	sprite.move(velocity * frameTime);
+
+    const float gravity = 200.0f; // You can tweak this for realism
+
+    // Apply gravity to vertical velocity
+    velocity.y += gravity * deltaTime;
+
+    // Move the bullet by its current velocity
+    sprite.move(velocity * deltaTime);
 }
 
 bool Bullet::IsOnScreen() const
