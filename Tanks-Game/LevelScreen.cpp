@@ -103,17 +103,41 @@ void LevelScreen::Update(float frameTime)
 		myPlayer2->Update(frameTime);
 	}
 
-	// ?? Update bullets
 	for (int i = bullets.size() - 1; i >= 0; --i)
 	{
 		bullets[i]->Update(frameTime);
+
+		// Remove if off screen
 		if (!bullets[i]->IsOnScreen())
 		{
 			delete bullets[i];
 			bullets.erase(bullets.begin() + i);
+			continue;
 		}
-	}
 
+		sf::FloatRect bulletBounds = bullets[i]->GetGlobalBounds();
+		sf::FloatRect groundBounds = ground.getGlobalBounds();
+
+		sf::Vector2f bPos = bulletBounds.position;
+		sf::Vector2f bSize = bulletBounds.size;
+
+		sf::Vector2f gPos = groundBounds.position;
+		sf::Vector2f gSize = groundBounds.size;
+
+		bool intersects =
+			bPos.x < gPos.x + gSize.x &&
+			bPos.x + bSize.x > gPos.x &&
+			bPos.y < gPos.y + gSize.y &&
+			bPos.y + bSize.y > gPos.y;
+
+		if (intersects)
+		{
+			delete bullets[i];
+			bullets.erase(bullets.begin() + i);
+			continue;
+		}
+
+	}
 
 
 }
@@ -135,3 +159,4 @@ Bullet* LevelScreen::SpawnBullet(sf::Vector2f pos, float speed, float angle)
 
 	return tempBullet;
 }
+

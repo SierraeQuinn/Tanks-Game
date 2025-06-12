@@ -49,4 +49,9 @@ bool Bullet::IsOnScreen() const
 	return pos.x >= 0 && pos.x <= 1920 && pos.y >= 0 && pos.y <= 1080; // Update if your window size is different
 }
 
+sf::FloatRect Bullet::GetGlobalBounds() const 
+{
+    return sprite.getGlobalBounds();  // This returns sf::FloatRect
+}
+
 

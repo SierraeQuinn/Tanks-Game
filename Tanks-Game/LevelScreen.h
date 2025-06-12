@@ -22,6 +22,7 @@ public:
 		float angle);
 	void SwitchTurn();
 
+
 private:
 
 	Player* myPlayer;

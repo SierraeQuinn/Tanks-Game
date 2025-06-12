@@ -18,9 +18,11 @@ public:
 	void DrawTo(sf::RenderTarget& target);
 	void Update(float deltaTime);
 	bool IsOnScreen() const;
-	
-	// Data
+	sf::FloatRect GetGlobalBounds() const;
+
+
 private:
+
 	sf::Sprite sprite;
 	sf::Vector2f velocity;
 	float damage;
