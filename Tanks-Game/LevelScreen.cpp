@@ -33,11 +33,7 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	ground.setFillColor(sf::Color(0, 180, 0));       // Green color
 	ground.setPosition(sf::Vector2f(0.f, screenSize.y - groundHeight));    // Align at bottom of screen
 
-	player1healthText.setPosition({ 50, 715 });
-	player1healthText.setString("Health: " + std::to_string(player1Health));
-
-	player2healthText.setPosition({ 1700, 715 });
-	player2healthText.setString("Health: " + std::to_string(player2Health));
+	
 
 	tankTextures[0].loadFromFile("Assets/tanks_tankDesert_body3.png");
 	tankTextures[1].loadFromFile("Assets/tanks_tankNavy_body3.png");
@@ -57,6 +53,16 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 
 	myPlayer->SetActive(true);
 	myPlayer2->SetActive(false);
+
+	player1healthText.setCharacterSize(24);
+	player1healthText.setFillColor(sf::Color::White);
+	player1healthText.setString("Health: " + std::to_string(player1Health));
+	player1healthText.setPosition({ 50.f, bottomThirdY + 70.f });
+
+	player2healthText.setCharacterSize(24);
+	player2healthText.setFillColor(sf::Color::White);
+	player2healthText.setString("Health: " + std::to_string(player2Health));
+	player2healthText.setPosition({ screenSize.x - 200.f, bottomThirdY + 70.f });
 }
 
 	
