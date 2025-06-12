@@ -124,7 +124,9 @@ void LevelScreen::Update(float frameTime)
 		{
 			delete bullets[i];
 			bullets.erase(bullets.begin() + i);
-			SwitchTurn();
+			ismyPlayerTurn = !ismyPlayerTurn;
+			myPlayer->ResetFire();
+			myPlayer2->ResetFire();
 			continue;
 		}
 
@@ -147,7 +149,9 @@ void LevelScreen::Update(float frameTime)
 		{
 			delete bullets[i];
 			bullets.erase(bullets.begin() + i);
-			SwitchTurn();
+			ismyPlayerTurn = !ismyPlayerTurn;
+			myPlayer->ResetFire();
+			myPlayer2->ResetFire();
 			continue;
 		}
 
@@ -174,7 +178,10 @@ void LevelScreen::Update(float frameTime)
 				delete bullets[i];
 				bullets.erase(bullets.begin() + i);
 				// ? Switch turns AFTER a valid hit
-				SwitchTurn();
+				ismyPlayerTurn = !ismyPlayerTurn;
+				myPlayer->ResetFire();
+				myPlayer2->ResetFire();
+
 				continue;
 			}
 		}
@@ -200,6 +207,9 @@ void LevelScreen::Update(float frameTime)
 				delete bullets[i];
 				bullets.erase(bullets.begin() + i);
 				SwitchTurn();
+				ismyPlayerTurn = !ismyPlayerTurn;
+				myPlayer->ResetFire();
+				myPlayer2->ResetFire();
 				continue;
 			}
 		}
@@ -212,6 +222,8 @@ void LevelScreen::Update(float frameTime)
 void LevelScreen::SwitchTurn()
 {
 	ismyPlayerTurn = !ismyPlayerTurn;
+	myPlayer->ResetFire();
+	myPlayer2->ResetFire();
 
 }
 

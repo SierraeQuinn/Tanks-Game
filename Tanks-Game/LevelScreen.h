@@ -49,6 +49,7 @@ private:
 	bool ismyPlayerTurn = true;
 	float timeSinceSpawn;
 	float spawnCooldown;
+	
 
 
 };

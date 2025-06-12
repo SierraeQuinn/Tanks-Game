@@ -18,11 +18,12 @@ public:
 
 	// Public functions
 	void DrawTo(sf::RenderTarget& target);
-	void Update(float frameTime);
-	void SetActive(bool active) { isActive = active; }
+	void Update(float dt);
 	void SetAngle(float newAngle);
 	sf::FloatRect GetGlobalBounds() const;
-	const sf::Sprite& GetSprite() const;
+	const sf::Sprite& GetSprite() const; 
+	void ResetFire();
+	void SetActive(bool active);
 
 private:
 
@@ -30,6 +31,7 @@ private:
 	void Fire();
 	void AngleChange(float deltaAngle);
 	void StrengthChange(float deltaStrength);
+	
 
 	// Data
 
@@ -53,6 +55,7 @@ private:
 	LevelScreen* level;
 
 	// Whether this player is allowed to update
-	bool isActive = true;
+	bool isActive = false;
+	bool canFireThisTurn = true;
 
 };

@@ -36,52 +36,56 @@ void Player::DrawTo(sf::RenderTarget& target)
 	target.draw(arrowSprite);
 }
 
-void Player:: Update(float frameTime)
+void Player:: Update(float dt)
 {
 
-	if (!isActive)
-		return; // 🚫 Don't update if it's not this player's turn
+	if (!isActive) return;
+
+	// Update cooldown timer
+	timeSinceFire += dt;
+
+	// Fire if space is pressed and cooldown has passed
+	if (canFireThisTurn && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
+	{
+		if (timeSinceFire >= fireCooldown)
+		{
+			Fire();
+			canFireThisTurn = false;
+			timeSinceFire = 0.0f;
+		}
+	}
 
 	const float ANGLE_SPEED = 90.0f;
 	const float STRENGTH_SPEED = 1.0f;
-
-	timeSinceFire += frameTime;
-
-	// Input handling
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)
-		&& timeSinceFire >= fireCooldown)
-	{
-		// Reset the time since firing
-		timeSinceFire = 0.0f;
-
-
-		Fire();
-	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
 	{
 		// Decrease Angle
-		AngleChange(-ANGLE_SPEED * frameTime);
+		AngleChange(-ANGLE_SPEED * dt);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
 	{
 		// Increase Angle
-		AngleChange(ANGLE_SPEED * frameTime);
+		AngleChange(ANGLE_SPEED * dt);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
 	{
 		// Increase Strength
-		StrengthChange(STRENGTH_SPEED * frameTime);
+		StrengthChange(STRENGTH_SPEED * dt);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
 	{
 		// Decrease Strength
-		StrengthChange(-STRENGTH_SPEED * frameTime);
+		StrengthChange(-STRENGTH_SPEED * dt);
 	}
 }
 
 
 void Player::Fire()
 {
+	// Block if player already fired this turn
+	if (!canFireThisTurn)
+		return;
+
 	// 1) Get the sprite’s current rotation as an sf::Angle
 	sf::Angle rot = gunSprite.getRotation();
 
@@ -101,7 +105,8 @@ void Player::Fire()
 	float deg = rot.asDegrees();
 	level->SpawnBullet(bulletPos, strength * firingSpeed, deg, this);
 
-	
+	// 🔒 Disallow further firing until reset
+	canFireThisTurn = false;
 }
 
 void Player::AngleChange(float deltaAngle)
@@ -141,4 +146,16 @@ void Player::SetAngle(float newAngle)
 sf::FloatRect Player::GetGlobalBounds() const 
 {
 	return baseSprite.getGlobalBounds();
+}
+
+void Player::SetActive(bool active)
+{
+	isActive = active;
+
+	if (active)
+		canFireThisTurn = true; // ✅ Reset fire permission on your turn
+}
+
+void Player::ResetFire() {
+	canFireThisTurn = true;
 }
