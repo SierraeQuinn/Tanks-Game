@@ -101,7 +101,7 @@ void Player::Fire()
 	float deg = rot.asDegrees();
 	level->SpawnBullet(bulletPos, strength * firingSpeed, deg, this);
 
-	level->SwitchTurn();
+	
 }
 
 void Player::AngleChange(float deltaAngle)
