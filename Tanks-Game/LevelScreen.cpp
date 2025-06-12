@@ -10,8 +10,10 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 
 	//--
 	, uiFont("Assets/Quantico-Regular.ttf")
-	, healthText(uiFont)
-	, cityHealth(100)
+	, player1healthText(uiFont)
+	, player2healthText(uiFont)
+	, player1Health(100)
+	, player2Health(100)
 	, screenSize(newScreenSize)
 	//--
 
@@ -31,8 +33,11 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	ground.setFillColor(sf::Color(0, 180, 0));       // Green color
 	ground.setPosition(sf::Vector2f(0.f, screenSize.y - groundHeight));    // Align at bottom of screen
 
-	healthText.setPosition({ 50, 50 });
-	healthText.setString("Health: " + std::to_string(cityHealth));
+	player1healthText.setPosition({ 50, 715 });
+	player1healthText.setString("Health: " + std::to_string(player1Health));
+
+	player2healthText.setPosition({ 1700, 715 });
+	player2healthText.setString("Health: " + std::to_string(player2Health));
 
 	tankTextures[0].loadFromFile("Assets/tanks_tankDesert_body3.png");
 	tankTextures[1].loadFromFile("Assets/tanks_tankNavy_body3.png");
@@ -85,7 +90,8 @@ void LevelScreen::DrawTo(sf::RenderTarget& target)
 	
 
 	// UI
-	target.draw(healthText);
+	target.draw(player1healthText);
+	target.draw(player2healthText);
 } 
 
 void LevelScreen::Update(float frameTime)

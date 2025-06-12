@@ -34,9 +34,11 @@ private:
 
 	//---
 	sf::Font uiFont;
-	sf::Text healthText;
+	sf::Text player1healthText;
+	sf::Text player2healthText;
 
-	int cityHealth;
+	int player1Health;
+	int player2Health;
 	sf::Vector2f screenSize;
 	//---
 
