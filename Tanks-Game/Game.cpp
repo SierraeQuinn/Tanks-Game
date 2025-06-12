@@ -26,19 +26,15 @@ void Game::Run()
                 window.close();
         }
 
-
         // Update
         float frameTime = gameTime.restart().asSeconds();
         level->Update(frameTime);
 
-
         // Drawing
-        window.clear();
-
+        window.clear(sf::Color(135, 206, 235)); // Light sky blue background
 
         // Draw all the things
         level->DrawTo(window);
-
 
         window.display();
     }
