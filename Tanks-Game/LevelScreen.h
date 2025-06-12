@@ -28,6 +28,7 @@ private:
 	Player* myPlayer2;
 	std::vector<Bullet*> bullets;
 	sf::Texture bulletTex;
+	sf::RectangleShape ground;
 	
 
 	//---

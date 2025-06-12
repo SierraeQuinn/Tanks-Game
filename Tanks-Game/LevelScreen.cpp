@@ -25,6 +25,12 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 
 
 	// UI Setup
+	//Ground set up 
+	float groundHeight = 365.f; // You can adjust the height
+	ground.setSize(sf::Vector2f(screenSize.x, groundHeight)); // Full width
+	ground.setFillColor(sf::Color(0, 180, 0));       // Green color
+	ground.setPosition(sf::Vector2f(0.f, screenSize.y - groundHeight));    // Align at bottom of screen
+
 	healthText.setPosition({ 50, 50 });
 	healthText.setString("Health: " + std::to_string(cityHealth));
 
@@ -68,6 +74,7 @@ LevelScreen::~LevelScreen()
 
 void LevelScreen::DrawTo(sf::RenderTarget& target)
 {
+	target.draw(ground);
 	myPlayer->DrawTo(target);
 	myPlayer2->DrawTo(target);
 	for (int i = 0; i < bullets.size(); ++i)
@@ -115,8 +122,6 @@ void LevelScreen::SwitchTurn()
 {
 	ismyPlayerTurn = !ismyPlayerTurn;
 
-	//myPlayer->SetActive(ismyPlayerTurn);
-	//myPlayer2->SetActive(!ismyPlayerTurn);
 }
 
 Bullet* LevelScreen::SpawnBullet(sf::Vector2f pos, float speed, float angle)
