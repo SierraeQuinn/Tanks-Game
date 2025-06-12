@@ -21,6 +21,8 @@ public:
 	void Update(float frameTime);
 	void SetActive(bool active) { isActive = active; }
 	void SetAngle(float newAngle);
+	sf::FloatRect GetGlobalBounds() const;
+	const sf::Sprite& GetSprite() const;
 
 private:
 

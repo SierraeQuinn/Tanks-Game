@@ -5,8 +5,6 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-// When using forward declarations in the .h, must actually do the #include in the .cpp
-#include "LevelScreen.h"
 
 
 Player::Player(sf::Vector2f pos, LevelScreen* newLevel, sf::Texture* tankTexture, sf::Texture* gunTexture)
@@ -101,7 +99,7 @@ void Player::Fire()
 
 	// 5) Spawn using the *float* degrees for Bullet’s constructor
 	float deg = rot.asDegrees();
-	level->SpawnBullet(bulletPos, strength * firingSpeed, deg);
+	level->SpawnBullet(bulletPos, strength * firingSpeed, deg, this);
 
 	level->SwitchTurn();
 }
@@ -138,4 +136,9 @@ void Player::SetAngle(float newAngle)
 	// Re-apply exactly the same rotation math you do in the ctor:
 	gunSprite.setRotation(sf::degrees(angle - 90.0f));
 	arrowSprite.setRotation(sf::degrees(angle - 90.0f));
+}
+
+sf::FloatRect Player::GetGlobalBounds() const 
+{
+	return baseSprite.getGlobalBounds();
 }

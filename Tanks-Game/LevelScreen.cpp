@@ -124,6 +124,7 @@ void LevelScreen::Update(float frameTime)
 		{
 			delete bullets[i];
 			bullets.erase(bullets.begin() + i);
+			ismyPlayerTurn = !ismyPlayerTurn;
 			continue;
 		}
 
@@ -146,13 +147,67 @@ void LevelScreen::Update(float frameTime)
 		{
 			delete bullets[i];
 			bullets.erase(bullets.begin() + i);
+			ismyPlayerTurn = !ismyPlayerTurn;
 			continue;
 		}
 
+		Player* owner = bullets[i]->GetOwner(); // Get the shooter
+
+		// Player 1 hit check — but only if the bullet was not shot by Player 1
+		if (owner != myPlayer)
+		{
+			sf::Vector2f p1Pos = myPlayer->GetGlobalBounds().position;
+			sf::Vector2f p1Size = myPlayer->GetGlobalBounds().size;
+
+			bool hitsP1 =
+				bPos.x < p1Pos.x + p1Size.x &&
+				bPos.x + bSize.x > p1Pos.x &&
+				bPos.y < p1Pos.y + p1Size.y &&
+				bPos.y + bSize.y > p1Pos.y;
+
+			if (hitsP1)
+			{
+				player1Health -= 10;
+				if (player1Health < 0) player1Health = 0;
+				player1healthText.setString("Health: " + std::to_string(player1Health));
+
+				delete bullets[i];
+				bullets.erase(bullets.begin() + i);
+				// ? Switch turns AFTER a valid hit
+				ismyPlayerTurn = !ismyPlayerTurn;
+				continue;
+			}
+		}
+
+		// Player 2 hit check — only if the bullet was not shot by Player 2
+		if (owner != myPlayer2)
+		{
+			sf::Vector2f p2Pos = myPlayer2->GetGlobalBounds().position;
+			sf::Vector2f p2Size = myPlayer2->GetGlobalBounds().size;
+
+			bool hitsP2 =
+				bPos.x < p2Pos.x + p2Size.x &&
+				bPos.x + bSize.x > p2Pos.x &&
+				bPos.y < p2Pos.y + p2Size.y &&
+				bPos.y + bSize.y > p2Pos.y;
+
+			if (hitsP2)
+			{
+				player2Health -= 10;
+				if (player2Health < 0) player2Health = 0;
+				player2healthText.setString("Health: " + std::to_string(player2Health));
+
+				delete bullets[i];
+				bullets.erase(bullets.begin() + i);
+				ismyPlayerTurn = !ismyPlayerTurn;
+				continue;
+			}
+		}
 	}
-
-
 }
+
+
+
 
 void LevelScreen::SwitchTurn()
 {
@@ -160,13 +215,9 @@ void LevelScreen::SwitchTurn()
 
 }
 
-Bullet* LevelScreen::SpawnBullet(sf::Vector2f pos, float speed, float angle)
+Bullet* LevelScreen::SpawnBullet(sf::Vector2f pos, float speed, float angle, Player* owner)
 {
-	Bullet* tempBullet = new Bullet(bulletTex,
-		speed,
-		angle,
-		pos);
-
+	Bullet* tempBullet = new Bullet(bulletTex, speed, angle, pos, owner);
 	bullets.push_back(tempBullet);
 
 	return tempBullet;

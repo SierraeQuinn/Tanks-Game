@@ -1,4 +1,5 @@
 #include "Bullet.h"
+#include "Player.h"
 #include <cmath>
 
 static constexpr float PI = 3.14159265358979323846f;
@@ -6,23 +7,26 @@ static constexpr float PI = 3.14159265358979323846f;
 Bullet::Bullet(sf::Texture& bulletTex,
     float firingSpeed,
     float firingAngle,
-    sf::Vector2f position)
-    : sprite(bulletTex)
-    , velocity({ 0,0 })
-    , damage(10)
+    sf::Vector2f position,
+    Player* owner) // this is the parameter
+    : sprite(bulletTex),
+    velocity({ 0, 0 }),
+    damage(10),
+    owner(owner) // this assigns the parameter to the class member
 {
-    // center via .size (SFML 2.6+)
     sf::Vector2f size = sprite.getGlobalBounds().size;
     sprite.setOrigin(size * 0.5f);
-
-    // position and rotate; setRotation takes sf::Angle
     sprite.setPosition(position);
     sprite.setRotation(sf::degrees(firingAngle));
 
-    // calculate movement vector: convert deg?rad
     float rad = firingAngle * PI / 180.f;
     velocity.x = std::cos(rad) * firingSpeed;
-    velocity.y = std::sin(rad) * firingSpeed;  // down is positive in SFML
+    velocity.y = std::sin(rad) * firingSpeed;
+}
+
+Player* Bullet::GetOwner() const
+{
+    return owner;
 }
 
 void Bullet::DrawTo(sf::RenderTarget& target)

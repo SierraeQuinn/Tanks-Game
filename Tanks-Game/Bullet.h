@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+class Player; // Forward declaration
 
 
 class Bullet
@@ -12,7 +13,9 @@ public:
 	Bullet(sf::Texture& bulletTex,
 		float firingSpeed,
 		float firingAngle,
-		sf::Vector2f position);
+		sf::Vector2f position, 
+		Player* owner);
+	    Player* GetOwner() const;
 
 	// Public Functions
 	void DrawTo(sf::RenderTarget& target);
@@ -26,6 +29,7 @@ private:
 	sf::Sprite sprite;
 	sf::Vector2f velocity;
 	float damage;
+	Player* owner;  
 
 };
 

@@ -19,7 +19,8 @@ public:
 
 	Bullet* SpawnBullet(sf::Vector2f pos,
 		float speed,
-		float angle);
+		float angle,
+		Player* owner);
 	void SwitchTurn();
 
 
