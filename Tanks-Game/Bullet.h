@@ -13,6 +13,8 @@ public:
 	Bullet(sf::Texture& bulletTex,
 		float firingSpeed,
 		float firingAngle,
+		float windPower,
+		sf::Vector2f firingVelocity,
 		sf::Vector2f position, 
 		Player* owner);
 	    Player* GetOwner() const;
@@ -30,6 +32,7 @@ private:
 	sf::Vector2f velocity;
 	float damage;
 	Player* owner;  
+	float windPower;
 
 };
 

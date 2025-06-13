@@ -36,77 +36,55 @@ void Player::DrawTo(sf::RenderTarget& target)
 	target.draw(arrowSprite);
 }
 
-void Player:: Update(float dt)
+void Player::Update(float frameTime)
 {
-
-	if (!isActive) return;
-
-	// Update cooldown timer
-	timeSinceFire += dt;
-
-	// Fire if space is pressed and cooldown has passed
-	if (canFireThisTurn && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
-	{
-		if (timeSinceFire >= fireCooldown)
-		{
-			Fire();
-			canFireThisTurn = false;
-			timeSinceFire = 0.0f;
-		}
-	}
-
 	const float ANGLE_SPEED = 90.0f;
 	const float STRENGTH_SPEED = 1.0f;
+
+	timeSinceFire += frameTime;
+
+	// Input handling
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)
+		&& timeSinceFire >= fireCooldown)
+	{
+		// Reset the time since firing
+		timeSinceFire = 0.0f;
+
+		// Fire ze lazers!
+		Fire();
+	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
 	{
 		// Decrease Angle
-		AngleChange(-ANGLE_SPEED * dt);
+		AngleChange(-ANGLE_SPEED * frameTime);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
 	{
 		// Increase Angle
-		AngleChange(ANGLE_SPEED * dt);
+		AngleChange(ANGLE_SPEED * frameTime);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
 	{
 		// Increase Strength
-		StrengthChange(STRENGTH_SPEED * dt);
+		StrengthChange(STRENGTH_SPEED * frameTime);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
 	{
 		// Decrease Strength
-		StrengthChange(-STRENGTH_SPEED * dt);
+		StrengthChange(-STRENGTH_SPEED * frameTime);
 	}
 }
 
-
 void Player::Fire()
 {
-	// Block if player already fired this turn
-	if (!canFireThisTurn)
-		return;
+	float radians = (angle - 90.0f) * 3.14159265f / 180.0f;
+	velocity.x = std::cos(radians) * strength * firingSpeed;
+	velocity.y = std::sin(radians) * strength * firingSpeed;
 
-	// 1) Get the sprite’s current rotation as an sf::Angle
-	sf::Angle rot = gunSprite.getRotation();
+	// This should come from level, randomise it at the start of a players turn
+	windPower = static_cast<float>(rand() % 200 - 100);
 
-	// 2) Derive a float barrel length
-	float barrelLength = 40.f;
-	if (gunTexture)
-		barrelLength = static_cast<float>(gunTexture->getSize().x);
-
-	// 3) Build a unit vector from the angle
-	float rad = rot.asRadians();
-	sf::Vector2f direction{ std::cos(rad), std::sin(rad) };
-
-	// 4) Compute barrel‐tip world pos
-	sf::Vector2f bulletPos = gunSprite.getPosition() + direction * barrelLength;
-
-	// 5) Spawn using the *float* degrees for Bullet’s constructor
-	float deg = rot.asDegrees();
-	level->SpawnBullet(bulletPos, strength * firingSpeed, deg, this);
-
-	// 🔒 Disallow further firing until reset
-	canFireThisTurn = false;
+	level->SpawnBullet(gunSprite.getPosition(), strength * firingSpeed * 1000, (angle - 90.0f), windPower, velocity, this);
 }
 
 void Player::AngleChange(float deltaAngle)
@@ -120,6 +98,11 @@ void Player::AngleChange(float deltaAngle)
 	// Update sprites
 	gunSprite.setRotation(sf::degrees(angle - 90.0f));
 	arrowSprite.setRotation(sf::degrees(angle - 90.0f));
+
+	// Calculate velocity based on angle (convert to radians for trig functions)
+	float radians = angle * 3.14159265f / 180.0f;
+	velocity.x = std::cos(radians) * strength * firingSpeed;
+	velocity.y = std::sin(radians) * strength * firingSpeed;
 }
 
 void Player::StrengthChange(float deltaStrength)
@@ -148,14 +131,3 @@ sf::FloatRect Player::GetGlobalBounds() const
 	return baseSprite.getGlobalBounds();
 }
 
-void Player::SetActive(bool active)
-{
-	isActive = active;
-
-	if (active)
-		canFireThisTurn = true; // ✅ Reset fire permission on your turn
-}
-
-void Player::ResetFire() {
-	canFireThisTurn = true;
-}

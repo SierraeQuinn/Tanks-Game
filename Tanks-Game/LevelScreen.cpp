@@ -26,7 +26,7 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 {
 
 
-	// UI Setup
+
 	//Ground set up 
 	float groundHeight = 365.f; // You can adjust the height
 	ground.setSize(sf::Vector2f(screenSize.x, groundHeight)); // Full width
@@ -51,8 +51,7 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	// Immediately flip it to face left (–90° = left in your system)
 	myPlayer2->SetAngle(-90.0f);
 
-	myPlayer->SetActive(true);
-	myPlayer2->SetActive(false);
+
 
 	player1healthText.setCharacterSize(24);
 	player1healthText.setFillColor(sf::Color::White);
@@ -71,15 +70,12 @@ LevelScreen::~LevelScreen()
 {
 	delete myPlayer;
 	delete myPlayer2;
-	for (int i = 0; i < bullets.size(); ++i)
-	{
-		
 
 		for (int i = 0; i < bullets.size(); ++i)
 		{
 			delete bullets[i];
 		}
-	}
+
 }
 
 
@@ -102,16 +98,13 @@ void LevelScreen::DrawTo(sf::RenderTarget& target)
 
 void LevelScreen::Update(float frameTime)
 {// ?? Update only the active player
-	if (ismyPlayerTurn)
+	if (player == 0)
 	{
-		myPlayer->SetActive(true);
-		myPlayer2->SetActive(false);
 		myPlayer->Update(frameTime);
 	}
 	else
 	{
-		myPlayer->SetActive(false);
-		myPlayer2->SetActive(true);
+
 		myPlayer2->Update(frameTime);
 	}
 
@@ -124,9 +117,7 @@ void LevelScreen::Update(float frameTime)
 		{
 			delete bullets[i];
 			bullets.erase(bullets.begin() + i);
-			ismyPlayerTurn = !ismyPlayerTurn;
-			myPlayer->ResetFire();
-			myPlayer2->ResetFire();
+			SwitchTurn();
 			continue;
 		}
 
@@ -149,9 +140,7 @@ void LevelScreen::Update(float frameTime)
 		{
 			delete bullets[i];
 			bullets.erase(bullets.begin() + i);
-			ismyPlayerTurn = !ismyPlayerTurn;
-			myPlayer->ResetFire();
-			myPlayer2->ResetFire();
+			SwitchTurn();
 			continue;
 		}
 
@@ -177,10 +166,8 @@ void LevelScreen::Update(float frameTime)
 
 				delete bullets[i];
 				bullets.erase(bullets.begin() + i);
-				// ? Switch turns AFTER a valid hit
-				ismyPlayerTurn = !ismyPlayerTurn;
-				myPlayer->ResetFire();
-				myPlayer2->ResetFire();
+				SwitchTurn();
+			
 
 				continue;
 			}
@@ -207,9 +194,7 @@ void LevelScreen::Update(float frameTime)
 				delete bullets[i];
 				bullets.erase(bullets.begin() + i);
 				SwitchTurn();
-				ismyPlayerTurn = !ismyPlayerTurn;
-				myPlayer->ResetFire();
-				myPlayer2->ResetFire();
+				
 				continue;
 			}
 		}
@@ -221,16 +206,31 @@ void LevelScreen::Update(float frameTime)
 
 void LevelScreen::SwitchTurn()
 {
-	ismyPlayerTurn = !ismyPlayerTurn;
-	myPlayer->ResetFire();
-	myPlayer2->ResetFire();
+	if (player == 0)
+	{
+		player = 1;
+	}
+	else
+	{
+		player = 0;
+	}
 
 }
 
-Bullet* LevelScreen::SpawnBullet(sf::Vector2f pos, float speed, float angle, Player* owner)
+Bullet* LevelScreen::SpawnBullet(sf::Vector2f pos, float speed, float angle, float windPower, sf::Vector2f velocity,Player* owner)
 {
-	Bullet* tempBullet = new Bullet(bulletTex, speed, angle, pos, owner);
+	Bullet* tempBullet = new Bullet(bulletTex,
+		speed,
+		angle,
+		windPower,
+		velocity,
+		pos,
+		owner);
+
 	bullets.push_back(tempBullet);
+
+	// ?? Optional: if you want to switch turns *only after bullet finishes*
+	// SwitchTurn();
 
 	return tempBullet;
 }

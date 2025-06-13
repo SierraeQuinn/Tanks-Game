@@ -18,12 +18,11 @@ public:
 
 	// Public functions
 	void DrawTo(sf::RenderTarget& target);
-	void Update(float dt);
+	void Update(float frameTime);
 	void SetAngle(float newAngle);
 	sf::FloatRect GetGlobalBounds() const;
 	const sf::Sprite& GetSprite() const; 
-	void ResetFire();
-	void SetActive(bool active);
+	
 
 private:
 
@@ -48,14 +47,14 @@ private:
 	float angle;
 	float strength;
 	float firingSpeed;
+	float windPower;
+	sf::Vector2f velocity;
 
 	float fireCooldown;
 	float timeSinceFire;
 
 	LevelScreen* level;
 
-	// Whether this player is allowed to update
-	bool isActive = false;
-	bool canFireThisTurn = true;
+	
 
 };

@@ -20,6 +20,8 @@ public:
 	Bullet* SpawnBullet(sf::Vector2f pos,
 		float speed,
 		float angle,
+		float windPower,
+		sf::Vector2f velocity,
 		Player* owner);
 	void SwitchTurn();
 
@@ -28,6 +30,7 @@ private:
 
 	Player* myPlayer;
 	Player* myPlayer2;
+	int player = 0;
 	std::vector<Bullet*> bullets;
 	sf::Texture bulletTex;
 	sf::RectangleShape ground;

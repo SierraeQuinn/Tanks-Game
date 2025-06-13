@@ -7,21 +7,24 @@ static constexpr float PI = 3.14159265358979323846f;
 Bullet::Bullet(sf::Texture& bulletTex,
     float firingSpeed,
     float firingAngle,
+    float windPower,
+    sf::Vector2f velocity,
     sf::Vector2f position,
     Player* owner) // this is the parameter
     : sprite(bulletTex),
-    velocity({ 0, 0 }),
+    velocity(velocity),
     damage(10),
-    owner(owner) // this assigns the parameter to the class member
+    owner(owner),
+    windPower(windPower)// this assigns the parameter to the class member
 {
     sf::Vector2f size = sprite.getGlobalBounds().size;
     sprite.setOrigin(size * 0.5f);
     sprite.setPosition(position);
     sprite.setRotation(sf::degrees(firingAngle));
 
-    float rad = firingAngle * PI / 180.f;
-    velocity.x = std::cos(rad) * firingSpeed;
-    velocity.y = std::sin(rad) * firingSpeed;
+   // float rad = firingAngle * PI / 180.f;
+    //velocity.x = std::cos(rad) * firingSpeed;
+  //  velocity.y = std::sin(rad) * firingSpeed;
 }
 
 Player* Bullet::GetOwner() const
@@ -35,16 +38,16 @@ void Bullet::DrawTo(sf::RenderTarget& target)
 	target.draw(sprite);
 }
 
-void Bullet::Update(float deltaTime)
+void Bullet::Update(float frameTime)
 {
 
-    const float gravity = 200.0f; // You can tweak this for realism
+    float gravity = 100.f;
+    velocity.y += gravity * frameTime;
+    velocity.x += windPower * frameTime;
+    sprite.move(velocity * frameTime);
 
-    // Apply gravity to vertical velocity
-    velocity.y += gravity * deltaTime;
-
-    // Move the bullet by its current velocity
-    sprite.move(velocity * deltaTime);
+    float angle = std::atan2(velocity.y, velocity.x) * 180.0f / 3.14159265f;
+    sprite.setRotation(sf::degrees(angle));
 }
 
 bool Bullet::IsOnScreen() const
