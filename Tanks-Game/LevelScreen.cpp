@@ -159,18 +159,17 @@ void LevelScreen::Update(float frameTime)
 		return; // skip the rest of Update
 	}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num1)) 
+	bool tabPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Tab);
+
+	if (tabPressed && !wasTabPressedLastFrame)
 	{
-		currentAmmoType = AmmoType::Normal;
+		// Cycle through ammo types
+		int nextAmmo = static_cast<int>(currentAmmoType) + 1;
+		if (nextAmmo > static_cast<int>(AmmoType::Speed)) // Wrap around
+			nextAmmo = 0;
+		currentAmmoType = static_cast<AmmoType>(nextAmmo);
 	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num2)) 
-	{
-		currentAmmoType = AmmoType::Explosive;
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num3)) 
-	{
-		currentAmmoType = AmmoType::Speed;
-	}
+	wasTabPressedLastFrame = tabPressed;
 
 
 	if (player == 0)

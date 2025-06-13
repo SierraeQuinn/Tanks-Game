@@ -66,6 +66,7 @@ private:
 	bool prev2 = false;
 	bool prev3 = false;
 	bool gameOver = false;
+	bool wasTabPressedLastFrame = false;
 	sf::Text winnerText;
 	sf::Text restartText;
 	sf::Vector2f startingPos1;
