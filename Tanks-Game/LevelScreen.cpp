@@ -108,8 +108,6 @@ LevelScreen::~LevelScreen()
 
 void LevelScreen::DrawTo(sf::RenderTarget& target)
 {
-	//if (gameOver)
-	target.draw(winnerText);
 
 	target.draw(ground);
 	
@@ -130,6 +128,10 @@ void LevelScreen::DrawTo(sf::RenderTarget& target)
 	target.draw(player2healthText);
 	target.draw(windText);
 	target.draw(compassSprite);
+
+
+	if (gameOver)
+		target.draw(winnerText);
 } 
 
 void LevelScreen::Update(float frameTime)
@@ -290,6 +292,8 @@ void LevelScreen::Update(float frameTime)
 	}
 	int p1Health = myPlayer->GetHealth();
 	int p2Health = myPlayer2->GetHealth();
+
+
 }
 
 
