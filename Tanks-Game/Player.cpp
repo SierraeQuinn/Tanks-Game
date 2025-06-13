@@ -139,3 +139,9 @@ void Player::ModifyHealth(int delta)
 int Player::GetHealth() const {
 	return health;
 }
+void Player::TakeDamage(int damage)
+{
+	health -= damage;
+	if (health < 0)
+		health = 0;
+}

@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Bullet.h"
 #include "ExplosiveBullet.h"
+#include "SpeedBullet.h"
 #include <SFML/Graphics.hpp>
 #include <cstdlib> // for rand()
 #include <ctime>   // for time()
@@ -12,7 +13,8 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	: bullets()
 	, bulletTex("Assets/tank_bullet1.png")
 	, explosiveBulletTex("Assets/tank_bullet3.png")
-	,compassTexture("Assets/Compass.png")
+	, speedBulletTex("Assets/tank_bullet6.png")
+	, compassTexture("Assets/Compass.png")
 	, compassSprite(compassTexture)
 
 	//--
@@ -119,13 +121,17 @@ void LevelScreen::DrawTo(sf::RenderTarget& target)
 void LevelScreen::Update(float frameTime)
 {// ?? Update only the active player
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num1))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num1)) 
 	{
 		currentAmmoType = AmmoType::Normal;
 	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num2))
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num2)) 
 	{
 		currentAmmoType = AmmoType::Explosive;
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num3)) 
+	{
+		currentAmmoType = AmmoType::Speed;
 	}
 
 
@@ -244,22 +250,25 @@ void LevelScreen::SwitchTurn()
 	GenerateRandomWind();
 }
 
-Bullet* LevelScreen::SpawnBullet(sf::Vector2f pos, float speed, float angle,float windPower, sf::Vector2f velocity,Player* owner)
+Bullet* LevelScreen::SpawnBullet(sf::Vector2f pos, float speed, float angle, float windPower, sf::Vector2f velocity, Player* owner)
 {
-	Bullet* tempBullet = nullptr;
+    Bullet* tempBullet = nullptr;
 
-	switch (currentAmmoType)
-	{
-	case AmmoType::Normal:
-		tempBullet = new Bullet(bulletTex, speed, angle, windPower, velocity, pos, owner);
-		break;
-	case AmmoType::Explosive:
-		tempBullet = new ExplosiveBullet(explosiveBulletTex, speed, angle, windPower, velocity, pos, owner);
-		break;
-	}
+    switch (currentAmmoType)
+    {
+        case AmmoType::Normal:
+            tempBullet = new Bullet(bulletTex, speed, angle, windPower, velocity, pos, owner);
+            break;
+        case AmmoType::Explosive:
+            tempBullet = new ExplosiveBullet(explosiveBulletTex, speed, angle, windPower, velocity, pos, owner);
+            break;
+        case AmmoType::Speed:
+            tempBullet = new SpeedBullet(speedBulletTex, speed, angle, windPower, velocity, pos, owner);
+            break;
+    }
 
-	bullets.push_back(tempBullet);
-	return tempBullet;
+    bullets.push_back(tempBullet);
+    return tempBullet;
 }
 
 void LevelScreen::GenerateRandomWind()

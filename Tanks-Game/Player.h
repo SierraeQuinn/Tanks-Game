@@ -24,6 +24,7 @@ public:
 	const sf::Sprite& GetSprite() const; 
 	void ModifyHealth(int delta);
 	int GetHealth() const;
+	void TakeDamage(int damage);
 	
 
 private:

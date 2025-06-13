@@ -5,18 +5,18 @@
 
 static constexpr float PI = 3.14159265358979323846f;
 
-Bullet::Bullet(sf::Texture& bulletTex,
+Bullet::Bullet(const sf::Texture& bulletTex,
     float firingSpeed,
     float firingAngle,
     float windPower,
     sf::Vector2f velocity,
     sf::Vector2f position,
-    Player* owner) // this is the parameter
+    Player* owner)
     : sprite(bulletTex),
     velocity(velocity),
     damage(10),
     owner(owner),
-    windPower(windPower)// this assigns the parameter to the class member
+    windPower(windPower)
 {
     sf::Vector2f size = sprite.getGlobalBounds().size;
     sprite.setOrigin(size * 0.5f);

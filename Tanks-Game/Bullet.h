@@ -2,10 +2,9 @@
 #include <SFML/Graphics.hpp>
 class Player; // Forward declaration
 
-
 class Bullet {
 public:
-    Bullet(sf::Texture& bulletTex,
+    Bullet(const sf::Texture& bulletTex,
         float firingSpeed,
         float firingAngle,
         float windPower,
@@ -13,11 +12,12 @@ public:
         sf::Vector2f position,
         Player* owner);
 
+
     virtual ~Bullet() = default;
 
     virtual void Update(float frameTime);
     virtual void DrawTo(sf::RenderTarget& target);
-    virtual void OnHit(Player* target); // <-- Add this for effects
+    virtual void OnHit(Player* target); // <-- For effects
     virtual float GetDamage() const { return damage; }
     void SetDamage(float dmg) { damage = dmg; }
 
@@ -25,14 +25,11 @@ public:
     sf::FloatRect GetGlobalBounds() const;
     Player* GetOwner() const;
 
-private:
+protected: // <-- changed from private to protected
     sf::Sprite sprite;
-    sf::Vector2f velocity;
-    
     float windPower;
     Player* owner;
-
-protected:
-   float damage;
+    float damage;
+    sf::Vector2f velocity;
 };
 

@@ -6,8 +6,9 @@
 enum class AmmoType
 {
 	Normal,
-	Explosive
-	// You can add more types later (e.g., Freeze, Bouncy)
+	Explosive,
+	Speed
+	
 };
 
 class LevelScreen
@@ -44,6 +45,7 @@ private:
 	std::vector<Bullet*> bullets;
 	sf::Texture bulletTex;
 	sf::Texture explosiveBulletTex;
+	sf::Texture speedBulletTex;
 	sf::Texture compassTexture;
 	sf::Sprite compassSprite;
 	sf::RectangleShape ground;
@@ -56,6 +58,9 @@ private:
 	sf::Text windText;
 	std::string windDirectionStr;
 	float windPower = 100.0f;
+	bool prev1 = false;
+	bool prev2 = false;
+	bool prev3 = false;
 	
 	
 
