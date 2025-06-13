@@ -22,6 +22,8 @@ public:
 	void SetAngle(float newAngle);
 	sf::FloatRect GetGlobalBounds() const;
 	const sf::Sprite& GetSprite() const; 
+	void ModifyHealth(int delta);
+	int GetHealth() const;
 	
 
 private:
@@ -49,6 +51,8 @@ private:
 	float firingSpeed;
 	float windPower;
 	sf::Vector2f velocity;
+
+	int health = 100;
 
 	float fireCooldown;
 	float timeSinceFire;

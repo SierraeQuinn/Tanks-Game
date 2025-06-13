@@ -3,9 +3,16 @@
 #include "Player.h"
 #include "Bullet.h"
 
+enum class AmmoType
+{
+	Normal,
+	Explosive
+	// You can add more types later (e.g., Freeze, Bouncy)
+};
 
 class LevelScreen
 {
+
 
 public:
 
@@ -36,6 +43,7 @@ private:
 	int player = 0;
 	std::vector<Bullet*> bullets;
 	sf::Texture bulletTex;
+	sf::Texture explosiveBulletTex;
 	sf::Texture compassTexture;
 	sf::Sprite compassSprite;
 	sf::RectangleShape ground;
@@ -51,8 +59,7 @@ private:
 	
 	
 
-	int player1Health;
-	int player2Health;
+	
 	sf::Vector2f screenSize;
 	//---
 
@@ -62,7 +69,10 @@ private:
 	bool ismyPlayerTurn = true;
 	float timeSinceSpawn;
 	float spawnCooldown;
+	AmmoType currentAmmoType = AmmoType::Normal;
 	
 
 
 };
+
+

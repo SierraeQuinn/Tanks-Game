@@ -1,6 +1,7 @@
 #include "LevelScreen.h"
 #include "Player.h"
 #include "Bullet.h"
+#include "ExplosiveBullet.h"
 #include <SFML/Graphics.hpp>
 #include <cstdlib> // for rand()
 #include <ctime>   // for time()
@@ -10,6 +11,7 @@
 LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	: bullets()
 	, bulletTex("Assets/tank_bullet1.png")
+	, explosiveBulletTex("Assets/tank_bullet3.png")
 	,compassTexture("Assets/Compass.png")
 	, compassSprite(compassTexture)
 
@@ -18,8 +20,6 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	, player1healthText(uiFont)
 	, player2healthText(uiFont)
 	,windText(uiFont)
-	, player1Health(100)
-	, player2Health(100)
 	, screenSize(newScreenSize)
 	//--
 
@@ -72,12 +72,12 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 
 	player1healthText.setCharacterSize(24);
 	player1healthText.setFillColor(sf::Color::White);
-	player1healthText.setString("Health: " + std::to_string(player1Health));
+	player1healthText.setString("Health: " + std::to_string(myPlayer->GetHealth()));
 	player1healthText.setPosition({ 50.f, bottomThirdY + 70.f });
 
 	player2healthText.setCharacterSize(24);
 	player2healthText.setFillColor(sf::Color::White);
-	player2healthText.setString("Health: " + std::to_string(player2Health));
+	player2healthText.setString("Health: " + std::to_string(myPlayer2->GetHealth()));
 	player2healthText.setPosition({ screenSize.x - 200.f, bottomThirdY + 70.f });
 }
 
@@ -118,6 +118,17 @@ void LevelScreen::DrawTo(sf::RenderTarget& target)
 
 void LevelScreen::Update(float frameTime)
 {// ?? Update only the active player
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num1))
+	{
+		currentAmmoType = AmmoType::Normal;
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num2))
+	{
+		currentAmmoType = AmmoType::Explosive;
+	}
+
+
 	if (player == 0)
 	{
 		myPlayer->Update(frameTime);
@@ -166,8 +177,8 @@ void LevelScreen::Update(float frameTime)
 
 		Player* owner = bullets[i]->GetOwner(); // Get the shooter
 
-		// Player 1 hit check — but only if the bullet was not shot by Player 1
-		if (owner != myPlayer)
+		// Player 1 hit check — only if the bullet was NOT shot by Player 1
+		if (owner != myPlayer) 
 		{
 			sf::Vector2f p1Pos = myPlayer->GetGlobalBounds().position;
 			sf::Vector2f p1Size = myPlayer->GetGlobalBounds().size;
@@ -178,23 +189,19 @@ void LevelScreen::Update(float frameTime)
 				bPos.y < p1Pos.y + p1Size.y &&
 				bPos.y + bSize.y > p1Pos.y;
 
-			if (hitsP1)
-			{
-				player1Health -= 10;
-				if (player1Health < 0) player1Health = 0;
-				player1healthText.setString("Health: " + std::to_string(player1Health));
+			if (hitsP1) {
+				bullets[i]->OnHit(myPlayer);  // Damage logic handled inside Bullet
+				player1healthText.setString("Health: " + std::to_string(myPlayer->GetHealth()));
 
 				delete bullets[i];
 				bullets.erase(bullets.begin() + i);
 				SwitchTurn();
-			
-
 				continue;
 			}
 		}
 
-		// Player 2 hit check — only if the bullet was not shot by Player 2
-		if (owner != myPlayer2)
+		// Player 2 hit check — only if the bullet was NOT shot by Player 2
+		if (owner != myPlayer2) 
 		{
 			sf::Vector2f p2Pos = myPlayer2->GetGlobalBounds().position;
 			sf::Vector2f p2Size = myPlayer2->GetGlobalBounds().size;
@@ -205,20 +212,19 @@ void LevelScreen::Update(float frameTime)
 				bPos.y < p2Pos.y + p2Size.y &&
 				bPos.y + bSize.y > p2Pos.y;
 
-			if (hitsP2)
-			{
-				player2Health -= 10;
-				if (player2Health < 0) player2Health = 0;
-				player2healthText.setString("Health: " + std::to_string(player2Health));
+			if (hitsP2) {
+				bullets[i]->OnHit(myPlayer2);  // Damage logic handled inside Bullet
+				player2healthText.setString("Health: " + std::to_string(myPlayer2->GetHealth()));
 
 				delete bullets[i];
 				bullets.erase(bullets.begin() + i);
 				SwitchTurn();
-				
 				continue;
 			}
 		}
 	}
+	int p1Health = myPlayer->GetHealth();
+	int p2Health = myPlayer2->GetHealth();
 }
 
 
@@ -240,18 +246,19 @@ void LevelScreen::SwitchTurn()
 
 Bullet* LevelScreen::SpawnBullet(sf::Vector2f pos, float speed, float angle,float windPower, sf::Vector2f velocity,Player* owner)
 {
-	Bullet* tempBullet = new Bullet(bulletTex,
-		speed,
-		angle,
-		windPower,
-		velocity,
-		pos,
-		owner);
+	Bullet* tempBullet = nullptr;
+
+	switch (currentAmmoType)
+	{
+	case AmmoType::Normal:
+		tempBullet = new Bullet(bulletTex, speed, angle, windPower, velocity, pos, owner);
+		break;
+	case AmmoType::Explosive:
+		tempBullet = new ExplosiveBullet(explosiveBulletTex, speed, angle, windPower, velocity, pos, owner);
+		break;
+	}
 
 	bullets.push_back(tempBullet);
-
-	
-
 	return tempBullet;
 }
 

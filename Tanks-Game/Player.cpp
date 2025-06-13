@@ -131,3 +131,11 @@ sf::FloatRect Player::GetGlobalBounds() const
 	return baseSprite.getGlobalBounds();
 }
 
+void Player::ModifyHealth(int delta) 
+{
+	health += delta;
+	if (health < 0) health = 0;
+}
+int Player::GetHealth() const {
+	return health;
+}

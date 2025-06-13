@@ -170,6 +170,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ExplosiveBullet.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="LevelScreen.cpp" />
     <ClCompile Include="main.cpp" />
@@ -177,6 +178,7 @@
     <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ExplosiveBullet.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="LevelScreen.h" />
     <ClInclude Include="Bullet.h" />

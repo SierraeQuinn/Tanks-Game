@@ -1,5 +1,6 @@
 #include "Bullet.h"
 #include "Player.h"
+
 #include <cmath>
 
 static constexpr float PI = 3.14159265358979323846f;
@@ -57,6 +58,12 @@ bool Bullet::IsOnScreen() const
 sf::FloatRect Bullet::GetGlobalBounds() const 
 {
     return sprite.getGlobalBounds();  // This returns sf::FloatRect
+}
+
+void Bullet::OnHit(Player* target) {
+    // Default bullet deals simple damage
+    if (target)
+        target->ModifyHealth(-static_cast<int>(damage));
 }
 
 
