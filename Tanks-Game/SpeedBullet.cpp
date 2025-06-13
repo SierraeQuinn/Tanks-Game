@@ -16,7 +16,7 @@ SpeedBullet::SpeedBullet(sf::Texture& bulletTex,
 void SpeedBullet::OnHit(Player* target)
 {
     float speedMagnitude = std::sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
-    int damage = static_cast<int>(speedMagnitude * 0.3f); // scale as needed
+    int damage = static_cast<int>(speedMagnitude * 0.1f); // scale as needed
 
     target->TakeDamage(damage);
 }

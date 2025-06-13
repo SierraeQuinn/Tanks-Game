@@ -11,7 +11,7 @@ ExplosiveBullet::ExplosiveBullet(sf::Texture& tex,
     : Bullet(tex, speed, angle, windPower, velocity, position, owner)
 {
     // Explosive bullets do more damage (optional tweak)
-    this->SetDamage(20); // You'll need a SetDamage() method in Bullet
+    this->SetDamage(30); // You'll need a SetDamage() method in Bullet
 }
 
 void ExplosiveBullet::Update(float frameTime)
