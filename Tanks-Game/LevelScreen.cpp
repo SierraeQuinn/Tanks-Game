@@ -25,6 +25,7 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	, windText(uiFont)
 	, screenSize(newScreenSize)
 	, winnerText(uiFont)
+	, restartText(uiFont)
 	//--
 
 	, timeSinceSpawn(0.0f)
@@ -52,13 +53,16 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 
 	float bottomThirdY = screenSize.y * (2.0f / 3.0f) - tankTextures[0].getSize().y / 2.0f;
 
+	startingPos1 = { 100.0f, bottomThirdY };
+	startingPos2 = { screenSize.x - 100.0f, bottomThirdY };
+
 	myPlayer = new Player(
-		{ 100.0f, bottomThirdY },
+		{ startingPos1 },
 		this, &tankTextures[0], &gunTexture);
 	// Default actor sets angle = 90, so faces right already.
 
 	myPlayer2 = new Player(
-		{ screenSize.x - 100.0f, bottomThirdY },
+		{ startingPos2 },
 		this, &tankTextures[1], &gunTexture);
 	// Immediately flip it to face left (–90° = left in your system)
 	myPlayer2->SetAngle(-90.0f);
@@ -69,6 +73,12 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	winnerText.setCharacterSize(48);
 	winnerText.setFillColor(sf::Color::Black);
 	winnerText.setPosition({ 500,400 });
+
+	// restart Text setup
+	restartText.setFont(uiFont);
+	restartText.setCharacterSize(48);
+	restartText.setFillColor(sf::Color::Black);
+	restartText.setPosition({ 500,300 });
 	
 
 	windText.setFont(uiFont);
@@ -131,13 +141,22 @@ void LevelScreen::DrawTo(sf::RenderTarget& target)
 
 
 	if (gameOver)
+	{
 		target.draw(winnerText);
+		target.draw(restartText);
+	}
 } 
 
 void LevelScreen::Update(float frameTime)
 {
 	if (gameOver)
-		return;
+	{
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter))
+		{
+			RestartGame(); // you'll define this
+		}
+		return; // skip the rest of Update
+	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num1)) 
 	{
@@ -345,5 +364,26 @@ void LevelScreen::GenerateRandomWind()
 		windPower = -windPower;  // Negative wind for West
 
 	windText.setString("Wind is blowing towards the: " + windDirectionStr + " at " + std::to_string(static_cast<int>(std::abs(windPower))));
+}
+
+void LevelScreen::RestartGame()
+{
+	gameOver = false;
+
+	// Reset health
+	myPlayer->SetHealth(100);
+	myPlayer2->SetHealth(100);
+
+	// Reset positions (if you want to)
+	myPlayer->SetPosition(startingPos1);
+	myPlayer2->SetPosition(startingPos2);
+
+	// Reset other game states
+	player = 0; // or whichever player starts
+	bullets.clear();
+	explosions.clear();
+
+	player1healthText.setString("Health: 100");
+	player2healthText.setString("Health: 100");
 }
 

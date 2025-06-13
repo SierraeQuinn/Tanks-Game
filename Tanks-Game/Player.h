@@ -21,10 +21,11 @@ public:
 	void Update(float frameTime);
 	void SetAngle(float newAngle);
 	sf::FloatRect GetGlobalBounds() const;
-	const sf::Sprite& GetSprite() const; 
 	void ModifyHealth(int delta);
 	int GetHealth() const;
 	void TakeDamage(int damage);
+	void SetHealth(int hp);                      
+	void SetPosition(sf::Vector2f newPos);
 	
 
 private:

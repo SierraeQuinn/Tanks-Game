@@ -145,3 +145,14 @@ void Player::TakeDamage(int damage)
 	if (health < 0)
 		health = 0;
 }
+
+void Player::SetHealth(int hp)
+{
+	health = hp;
+}
+
+void Player::SetPosition(sf::Vector2f newPos)
+{
+	baseSprite.setPosition(newPos);
+	gunSprite.setPosition(newPos); // optional: if your gun follows the base
+}

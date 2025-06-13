@@ -35,7 +35,7 @@ public:
 		sf::Vector2f velocity,
 		Player* owner);
 	void SwitchTurn();
-
+	void RestartGame();
 	float GetWindPower() const { return windPower; }
 
 
@@ -67,6 +67,9 @@ private:
 	bool prev3 = false;
 	bool gameOver = false;
 	sf::Text winnerText;
+	sf::Text restartText;
+	sf::Vector2f startingPos1;
+	sf::Vector2f startingPos2;
 	
 	
 
