@@ -26,6 +26,7 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	, screenSize(newScreenSize)
 	, winnerText(uiFont)
 	, restartText(uiFont)
+	, turnText(uiFont)
 	//--
 
 	, timeSinceSpawn(0.0f)
@@ -85,9 +86,15 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	windText.setFont(uiFont);
 	windText.setCharacterSize(24);
 	windText.setFillColor(sf::Color::Black);
-	windText.setPosition({ screenSize.x / 2.f - 100.f, 50.f });
+	windText.setPosition({ screenSize.x / 2.f - 150.f, 50.f });
 	windText.setString("Wind: 0");
 
+	turnText.setFont(uiFont);
+	turnText.setCharacterSize(24);
+	turnText.setFillColor(sf::Color::Black);
+	turnText.setPosition({ screenSize.x / 2.f - 80.f, 10.f }); // Adjust as needed
+	turnText.setString("Player 1's Turn");
+#
 	// Generate random wind on startup
 	GenerateRandomWind();
 
@@ -139,7 +146,7 @@ void LevelScreen::DrawTo(sf::RenderTarget& target)
 	target.draw(player2healthText);
 	target.draw(windText);
 	target.draw(compassSprite);
-
+	target.draw(turnText);
 
 	if (gameOver)
 	{
@@ -328,6 +335,11 @@ void LevelScreen::SwitchTurn()
 	{
 		player = 0;
 	}
+
+	if (player == 0)
+		turnText.setString("Player 1's Turn");
+	else
+		turnText.setString("Player 2's Turn");
 
 	GenerateRandomWind();
 }

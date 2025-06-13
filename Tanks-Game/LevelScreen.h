@@ -69,6 +69,7 @@ private:
 	bool wasTabPressedLastFrame = false;
 	sf::Text winnerText;
 	sf::Text restartText;
+	sf::Text turnText;
 	sf::Vector2f startingPos1;
 	sf::Vector2f startingPos2;
 	
