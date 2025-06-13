@@ -3,6 +3,7 @@
 #include "Bullet.h"
 #include "ExplosiveBullet.h"
 #include "SpeedBullet.h"
+#include "ExplosionEffect.h"
 #include <SFML/Graphics.hpp>
 #include <cstdlib> // for rand()
 #include <ctime>   // for time()
@@ -33,7 +34,7 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	
 {
 
-
+	explosionTexture.loadFromFile("Assets/tank_explosion3.png");
 
 	//Ground set up 
 	float groundHeight = 365.f; // You can adjust the height
@@ -109,7 +110,10 @@ void LevelScreen::DrawTo(sf::RenderTarget& target)
 		bullets[i]->DrawTo(target);
 	}
 
-	
+	for (auto& explosion : explosions)
+	{
+		explosion.DrawTo(target);
+	}
 
 	// UI
 	target.draw(player1healthText);
@@ -152,6 +156,11 @@ void LevelScreen::Update(float frameTime)
 		// Remove if off screen
 		if (!bullets[i]->IsOnScreen())
 		{
+			if (dynamic_cast<ExplosiveBullet*>(bullets[i])) 
+			{
+				explosions.emplace_back(explosionTexture, bullets[i]->GetPosition());
+			}
+
 			delete bullets[i];
 			bullets.erase(bullets.begin() + i);
 			SwitchTurn();
@@ -175,6 +184,11 @@ void LevelScreen::Update(float frameTime)
 
 		if (intersects)
 		{
+			if (dynamic_cast<ExplosiveBullet*>(bullets[i])) 
+			{
+				explosions.emplace_back(explosionTexture, bullets[i]->GetPosition());
+			}
+
 			delete bullets[i];
 			bullets.erase(bullets.begin() + i);
 			SwitchTurn();
@@ -199,6 +213,10 @@ void LevelScreen::Update(float frameTime)
 				bullets[i]->OnHit(myPlayer);  // Damage logic handled inside Bullet
 				player1healthText.setString("Health: " + std::to_string(myPlayer->GetHealth()));
 
+				if (dynamic_cast<ExplosiveBullet*>(bullets[i])) 
+				{
+					explosions.emplace_back(explosionTexture, bullets[i]->GetPosition());
+				}
 				delete bullets[i];
 				bullets.erase(bullets.begin() + i);
 				SwitchTurn();
@@ -222,12 +240,25 @@ void LevelScreen::Update(float frameTime)
 				bullets[i]->OnHit(myPlayer2);  // Damage logic handled inside Bullet
 				player2healthText.setString("Health: " + std::to_string(myPlayer2->GetHealth()));
 
+				if (dynamic_cast<ExplosiveBullet*>(bullets[i]))
+				{
+					explosions.emplace_back(explosionTexture, bullets[i]->GetPosition());
+				}
+
+
 				delete bullets[i];
 				bullets.erase(bullets.begin() + i);
 				SwitchTurn();
 				continue;
 			}
 		}
+	}
+
+	for (int i = explosions.size() - 1; i >= 0; --i)
+	{
+		explosions[i].Update(frameTime);
+		if (explosions[i].IsFinished())
+			explosions.erase(explosions.begin() + i);
 	}
 	int p1Health = myPlayer->GetHealth();
 	int p2Health = myPlayer2->GetHealth();

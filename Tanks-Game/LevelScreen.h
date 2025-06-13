@@ -2,6 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include "Player.h"
 #include "Bullet.h"
+#include "ExplosionEffect.h"
+
 
 enum class AmmoType
 {
@@ -49,6 +51,8 @@ private:
 	sf::Texture compassTexture;
 	sf::Sprite compassSprite;
 	sf::RectangleShape ground;
+	sf::Texture explosionTexture;
+	std::vector<ExplosionEffect> explosions;
 	
 
 	//---

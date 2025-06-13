@@ -11,6 +11,7 @@ public:
         sf::Vector2f velocity,
         sf::Vector2f position,
         Player* owner);
+        sf::Vector2f GetPosition() const { return sprite.getPosition(); }
 
 
     virtual ~Bullet() = default;
