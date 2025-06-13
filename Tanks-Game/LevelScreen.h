@@ -37,6 +37,7 @@ public:
 	void SwitchTurn();
 	void RestartGame();
 	float GetWindPower() const { return windPower; }
+	void UpdateAmmoTypeText();
 
 
 private:
@@ -70,6 +71,9 @@ private:
 	sf::Text winnerText;
 	sf::Text restartText;
 	sf::Text turnText;
+	sf::Text player1AmmoText;
+	sf::Text player2AmmoText;
+	//sf::Text currentAmmoTypeText;
 	sf::Vector2f startingPos1;
 	sf::Vector2f startingPos2;
 	

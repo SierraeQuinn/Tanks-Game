@@ -27,6 +27,8 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	, winnerText(uiFont)
 	, restartText(uiFont)
 	, turnText(uiFont)
+	, player1AmmoText(uiFont)
+	, player2AmmoText(uiFont)
 	//--
 
 	, timeSinceSpawn(0.0f)
@@ -103,10 +105,22 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	player1healthText.setString(" Player 1 Health: " + std::to_string(myPlayer->GetHealth()));
 	player1healthText.setPosition({ 50.f, bottomThirdY + 70.f });
 
+	player1AmmoText.setFont(uiFont);
+	player1AmmoText.setCharacterSize(20);
+	player1AmmoText.setFillColor(sf::Color::White);
+	player1AmmoText.setPosition({ 50.f, 800.f }); // Adjust Y as needed
+
 	player2healthText.setCharacterSize(24);
 	player2healthText.setFillColor(sf::Color::White);
 	player2healthText.setString("Player 2 Health: " + std::to_string(myPlayer2->GetHealth()));
 	player2healthText.setPosition({ screenSize.x - 300.f, bottomThirdY + 70.f });
+	player1AmmoText.setString("Player 1 Ammo: Normal");
+
+	player2AmmoText.setFont(uiFont);
+	player2AmmoText.setCharacterSize(20);
+	player2AmmoText.setFillColor(sf::Color::White);
+	player2AmmoText.setPosition({ screenSize.x - 300.f, 800.f }); // Adjust as needed
+	player2AmmoText.setString("Player 2 Ammo: Normal");
 }
 
 	
@@ -147,6 +161,8 @@ void LevelScreen::DrawTo(sf::RenderTarget& target)
 	target.draw(windText);
 	target.draw(compassSprite);
 	target.draw(turnText);
+	target.draw(player1AmmoText);
+	target.draw(player2AmmoText);
 
 	if (gameOver)
 	{
@@ -175,6 +191,7 @@ void LevelScreen::Update(float frameTime)
 		if (nextAmmo > static_cast<int>(AmmoType::Speed)) // Wrap around
 			nextAmmo = 0;
 		currentAmmoType = static_cast<AmmoType>(nextAmmo);
+		UpdateAmmoTypeText();
 	}
 	wasTabPressedLastFrame = tabPressed;
 
@@ -342,6 +359,7 @@ void LevelScreen::SwitchTurn()
 		turnText.setString("Player 2's Turn");
 
 	GenerateRandomWind();
+	UpdateAmmoTypeText();
 }
 
 Bullet* LevelScreen::SpawnBullet(sf::Vector2f pos, float speed, float angle, float windPower, sf::Vector2f velocity, Player* owner)
@@ -398,4 +416,22 @@ void LevelScreen::RestartGame()
 	player1healthText.setString("Health: 100");
 	player2healthText.setString("Health: 100");
 }
+
+void LevelScreen::UpdateAmmoTypeText()
+{
+	std::string typeName;
+	switch (currentAmmoType)
+	{
+	case AmmoType::Normal:    typeName = "Normal"; break;
+	case AmmoType::Explosive: typeName = "Explosive"; break;
+	case AmmoType::Speed:     typeName = "Speed"; break;
+	}
+
+	if (ismyPlayerTurn)
+		player1AmmoText.setString("Player 1 Ammo: " + typeName);
+	else
+		player2AmmoText.setString("Player 2 Ammo: " + typeName);
+}
+
+
 
