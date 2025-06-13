@@ -1,4 +1,4 @@
-#include "LevelScreen.h"
+ï»¿#include "LevelScreen.h"
 #include "Player.h"
 #include "Bullet.h"
 #include "ExplosiveBullet.h"
@@ -64,7 +64,7 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	myPlayer2 = new Player(
 		{ startingPos2 },
 		this, &tankTextures[1], &gunTexture);
-	// Immediately flip it to face left (–90° = left in your system)
+	// Immediately flip it to face left (â€“90Â° = left in your system)
 	myPlayer2->SetAngle(-90.0f);
 
 
@@ -72,13 +72,14 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	winnerText.setFont(uiFont);
 	winnerText.setCharacterSize(48);
 	winnerText.setFillColor(sf::Color::Black);
-	winnerText.setPosition({ 500,400 });
+	winnerText.setPosition({ 700,300 });
 
 	// restart Text setup
 	restartText.setFont(uiFont);
 	restartText.setCharacterSize(48);
 	restartText.setFillColor(sf::Color::Black);
-	restartText.setPosition({ 500,300 });
+	restartText.setString("Press Enter to Restart ");
+	restartText.setPosition({ 700,400 });
 	
 
 	windText.setFont(uiFont);
@@ -230,7 +231,7 @@ void LevelScreen::Update(float frameTime)
 
 		Player* owner = bullets[i]->GetOwner(); // Get the shooter
 
-		// Player 1 hit check — only if the bullet was NOT shot by Player 1
+		// Player 1 hit check â€” only if the bullet was NOT shot by Player 1
 		if (owner != myPlayer) 
 		{
 			sf::Vector2f p1Pos = myPlayer->GetGlobalBounds().position;
@@ -265,7 +266,7 @@ void LevelScreen::Update(float frameTime)
 			}
 		}
 
-		// Player 2 hit check — only if the bullet was NOT shot by Player 2
+		// Player 2 hit check â€” only if the bullet was NOT shot by Player 2
 		if (owner != myPlayer2) 
 		{
 			sf::Vector2f p2Pos = myPlayer2->GetGlobalBounds().position;
@@ -289,7 +290,7 @@ void LevelScreen::Update(float frameTime)
 
 				delete bullets[i];
 				bullets.erase(bullets.begin() + i);
-				// ?? Win Condition Check
+				// ðŸ† Win Condition Check
 				if (myPlayer2->GetHealth() <= 0)
 				{
 					// Player 1 wins
