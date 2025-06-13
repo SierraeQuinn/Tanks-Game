@@ -65,6 +65,8 @@ private:
 	bool prev1 = false;
 	bool prev2 = false;
 	bool prev3 = false;
+	bool gameOver = false;
+	sf::Text winnerText;
 	
 	
 

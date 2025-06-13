@@ -22,8 +22,9 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	, uiFont("Assets/Quantico-Regular.ttf")
 	, player1healthText(uiFont)
 	, player2healthText(uiFont)
-	,windText(uiFont)
+	, windText(uiFont)
 	, screenSize(newScreenSize)
+	, winnerText(uiFont)
 	//--
 
 	, timeSinceSpawn(0.0f)
@@ -63,7 +64,13 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	myPlayer2->SetAngle(-90.0f);
 
 
-	// Wind Text setup
+	// winner Text setup
+	winnerText.setFont(uiFont);
+	winnerText.setCharacterSize(48);
+	winnerText.setFillColor(sf::Color::Black);
+	winnerText.setPosition({ 500,400 });
+	
+
 	windText.setFont(uiFont);
 	windText.setCharacterSize(24);
 	windText.setFillColor(sf::Color::Black);
@@ -75,13 +82,13 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 
 	player1healthText.setCharacterSize(24);
 	player1healthText.setFillColor(sf::Color::White);
-	player1healthText.setString("Health: " + std::to_string(myPlayer->GetHealth()));
+	player1healthText.setString(" Player 1 Health: " + std::to_string(myPlayer->GetHealth()));
 	player1healthText.setPosition({ 50.f, bottomThirdY + 70.f });
 
 	player2healthText.setCharacterSize(24);
 	player2healthText.setFillColor(sf::Color::White);
-	player2healthText.setString("Health: " + std::to_string(myPlayer2->GetHealth()));
-	player2healthText.setPosition({ screenSize.x - 200.f, bottomThirdY + 70.f });
+	player2healthText.setString("Player 2 Health: " + std::to_string(myPlayer2->GetHealth()));
+	player2healthText.setPosition({ screenSize.x - 300.f, bottomThirdY + 70.f });
 }
 
 	
@@ -101,6 +108,9 @@ LevelScreen::~LevelScreen()
 
 void LevelScreen::DrawTo(sf::RenderTarget& target)
 {
+	//if (gameOver)
+	target.draw(winnerText);
+
 	target.draw(ground);
 	
 	myPlayer->DrawTo(target);
@@ -123,7 +133,9 @@ void LevelScreen::DrawTo(sf::RenderTarget& target)
 } 
 
 void LevelScreen::Update(float frameTime)
-{// ?? Update only the active player
+{
+	if (gameOver)
+		return;
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num1)) 
 	{
@@ -219,6 +231,14 @@ void LevelScreen::Update(float frameTime)
 				}
 				delete bullets[i];
 				bullets.erase(bullets.begin() + i);
+
+				if (myPlayer->GetHealth() <= 0)
+				{
+					// Player 2 wins
+					winnerText.setString("Player 2 Wins!");
+					gameOver = true;
+					return; // Exit early if needed
+				}
 				SwitchTurn();
 				continue;
 			}
@@ -248,6 +268,14 @@ void LevelScreen::Update(float frameTime)
 
 				delete bullets[i];
 				bullets.erase(bullets.begin() + i);
+				// ?? Win Condition Check
+				if (myPlayer2->GetHealth() <= 0)
+				{
+					// Player 1 wins
+					winnerText.setString("Player 1 Wins!");
+					gameOver = true;
+					return; // Exit early if needed
+				}
 				SwitchTurn();
 				continue;
 			}

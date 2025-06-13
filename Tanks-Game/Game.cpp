@@ -1,7 +1,7 @@
 #include "Game.h"
 
 Game::Game()
-    : window(sf::VideoMode({1920,1080}), "Tank Game", sf::State::Windowed)
+    : window(sf::VideoMode(sf::VideoMode::getDesktopMode()), "Tank Game", sf::State::Windowed)
     , level(nullptr)
     , gameTime()
 {
