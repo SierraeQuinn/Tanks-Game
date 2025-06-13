@@ -10,6 +10,8 @@
 LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	: bullets()
 	, bulletTex("Assets/tank_bullet1.png")
+	,compassTexture("Assets/Compass.png")
+	, compassSprite(compassTexture)
 
 	//--
 	, uiFont("Assets/Quantico-Regular.ttf")
@@ -37,7 +39,9 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	ground.setFillColor(sf::Color(0, 180, 0));       // Green color
 	ground.setPosition(sf::Vector2f(0.f, screenSize.y - groundHeight));    // Align at bottom of screen
 
-	
+	compassSprite.setOrigin({0.f,0.f });
+	compassSprite.setPosition(sf::Vector2f(50.f, 10.f));
+	compassSprite.setRotation(sf::degrees(0.0f));        // Optional: adjust size
 
 	tankTextures[0].loadFromFile("Assets/tanks_tankDesert_body3.png");
 	tankTextures[1].loadFromFile("Assets/tanks_tankNavy_body3.png");
@@ -95,6 +99,7 @@ LevelScreen::~LevelScreen()
 void LevelScreen::DrawTo(sf::RenderTarget& target)
 {
 	target.draw(ground);
+	
 	myPlayer->DrawTo(target);
 	myPlayer2->DrawTo(target);
 	for (int i = 0; i < bullets.size(); ++i)
@@ -108,6 +113,7 @@ void LevelScreen::DrawTo(sf::RenderTarget& target)
 	target.draw(player1healthText);
 	target.draw(player2healthText);
 	target.draw(windText);
+	target.draw(compassSprite);
 } 
 
 void LevelScreen::Update(float frameTime)
@@ -254,11 +260,11 @@ void LevelScreen::GenerateRandomWind()
 	int direction = std::rand() % 2; // 0 or 1
 	windDirectionStr = (direction == 0) ? "East" : "West";
 
-	windPower = static_cast<float>((std::rand() % 101) + 50); // Wind between 50 and 150
+	windPower = static_cast<float>(std::rand() % 151); // Range: 0 to 150
 
 	if (windDirectionStr == "West")
 		windPower = -windPower;  // Negative wind for West
 
-	windText.setString("Wind: " + windDirectionStr + " " + std::to_string(static_cast<int>(std::abs(windPower))));
+	windText.setString("Wind is blowing towards the: " + windDirectionStr + " at " + std::to_string(static_cast<int>(std::abs(windPower))));
 }
 

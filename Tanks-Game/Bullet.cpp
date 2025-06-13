@@ -22,9 +22,7 @@ Bullet::Bullet(sf::Texture& bulletTex,
     sprite.setPosition(position);
     sprite.setRotation(sf::degrees(firingAngle));
 
-   // float rad = firingAngle * PI / 180.f;
-    //velocity.x = std::cos(rad) * firingSpeed;
-  //  velocity.y = std::sin(rad) * firingSpeed;
+ 
 }
 
 Player* Bullet::GetOwner() const

@@ -36,6 +36,8 @@ private:
 	int player = 0;
 	std::vector<Bullet*> bullets;
 	sf::Texture bulletTex;
+	sf::Texture compassTexture;
+	sf::Sprite compassSprite;
 	sf::RectangleShape ground;
 	
 
@@ -45,7 +47,7 @@ private:
 	sf::Text player2healthText;
 	sf::Text windText;
 	std::string windDirectionStr;
-	float windPower = 0.0f;
+	float windPower = 100.0f;
 	
 	
 
