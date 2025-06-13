@@ -84,7 +84,7 @@ void Player::Fire()
 	// This should come from level, randomise it at the start of a players turn
 	windPower = static_cast<float>(rand() % 200 - 100);
 
-	level->SpawnBullet(gunSprite.getPosition(), strength * firingSpeed * 1000, (angle - 90.0f), windPower, velocity, this);
+	level->SpawnBullet(gunSprite.getPosition(), strength * firingSpeed * 1000, (angle - 90.0f), level->GetWindPower(), velocity, this);
 }
 
 void Player::AngleChange(float deltaAngle)

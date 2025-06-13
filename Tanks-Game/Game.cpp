@@ -5,7 +5,7 @@ Game::Game()
     , level(nullptr)
     , gameTime()
 {
-
+    std::srand(static_cast<unsigned int>(std::time(0)));
     level = new LevelScreen({ (float)sf::VideoMode::getDesktopMode().size.x,
         (float)sf::VideoMode::getDesktopMode().size.y });
 }

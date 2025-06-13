@@ -2,6 +2,9 @@
 #include "Player.h"
 #include "Bullet.h"
 #include <SFML/Graphics.hpp>
+#include <cstdlib> // for rand()
+#include <ctime>   // for time()
+#include <iostream>
 #include <string> 
 
 LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
@@ -12,6 +15,7 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	, uiFont("Assets/Quantico-Regular.ttf")
 	, player1healthText(uiFont)
 	, player2healthText(uiFont)
+	,windText(uiFont)
 	, player1Health(100)
 	, player2Health(100)
 	, screenSize(newScreenSize)
@@ -52,6 +56,15 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	myPlayer2->SetAngle(-90.0f);
 
 
+	// Wind Text setup
+	windText.setFont(uiFont);
+	windText.setCharacterSize(24);
+	windText.setFillColor(sf::Color::Black);
+	windText.setPosition({ screenSize.x / 2.f - 100.f, 50.f });
+	windText.setString("Wind: 0");
+
+	// Generate random wind on startup
+	GenerateRandomWind();
 
 	player1healthText.setCharacterSize(24);
 	player1healthText.setFillColor(sf::Color::White);
@@ -94,6 +107,7 @@ void LevelScreen::DrawTo(sf::RenderTarget& target)
 	// UI
 	target.draw(player1healthText);
 	target.draw(player2healthText);
+	target.draw(windText);
 } 
 
 void LevelScreen::Update(float frameTime)
@@ -215,9 +229,10 @@ void LevelScreen::SwitchTurn()
 		player = 0;
 	}
 
+	GenerateRandomWind();
 }
 
-Bullet* LevelScreen::SpawnBullet(sf::Vector2f pos, float speed, float angle, float windPower, sf::Vector2f velocity,Player* owner)
+Bullet* LevelScreen::SpawnBullet(sf::Vector2f pos, float speed, float angle,float windPower, sf::Vector2f velocity,Player* owner)
 {
 	Bullet* tempBullet = new Bullet(bulletTex,
 		speed,
@@ -229,9 +244,21 @@ Bullet* LevelScreen::SpawnBullet(sf::Vector2f pos, float speed, float angle, flo
 
 	bullets.push_back(tempBullet);
 
-	// ?? Optional: if you want to switch turns *only after bullet finishes*
-	// SwitchTurn();
+	
 
 	return tempBullet;
+}
+
+void LevelScreen::GenerateRandomWind()
+{
+	int direction = std::rand() % 2; // 0 or 1
+	windDirectionStr = (direction == 0) ? "East" : "West";
+
+	windPower = static_cast<float>((std::rand() % 101) + 50); // Wind between 50 and 150
+
+	if (windDirectionStr == "West")
+		windPower = -windPower;  // Negative wind for West
+
+	windText.setString("Wind: " + windDirectionStr + " " + std::to_string(static_cast<int>(std::abs(windPower))));
 }
 

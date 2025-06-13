@@ -16,6 +16,7 @@ public:
 	// Public Functions
 	void DrawTo(sf::RenderTarget& target);
 	void Update(float frameTime);
+	void GenerateRandomWind();
 
 	Bullet* SpawnBullet(sf::Vector2f pos,
 		float speed,
@@ -24,6 +25,8 @@ public:
 		sf::Vector2f velocity,
 		Player* owner);
 	void SwitchTurn();
+
+	float GetWindPower() const { return windPower; }
 
 
 private:
@@ -40,6 +43,11 @@ private:
 	sf::Font uiFont;
 	sf::Text player1healthText;
 	sf::Text player2healthText;
+	sf::Text windText;
+	std::string windDirectionStr;
+	float windPower = 0.0f;
+	
+	
 
 	int player1Health;
 	int player2Health;
