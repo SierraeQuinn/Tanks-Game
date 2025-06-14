@@ -73,7 +73,6 @@ private:
 	sf::Text turnText;
 	sf::Text player1AmmoText;
 	sf::Text player2AmmoText;
-	//sf::Text currentAmmoTypeText;
 	sf::Vector2f startingPos1;
 	sf::Vector2f startingPos2;
 	
@@ -89,7 +88,8 @@ private:
 	bool ismyPlayerTurn = true;
 	float timeSinceSpawn;
 	float spawnCooldown;
-	AmmoType currentAmmoType = AmmoType::Normal;
+	AmmoType player1AmmoType = AmmoType::Normal;
+	AmmoType player2AmmoType = AmmoType::Normal;
 	
 
 

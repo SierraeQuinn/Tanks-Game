@@ -35,11 +35,13 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	, spawnCooldown(1.0f)
 
 	, gunTexture("Assets/tanks_turret1.png")
-	, ismyPlayerTurn(true)   // enforce start turn here
+	
 	
 {
-
-	explosionTexture.loadFromFile("Assets/tank_explosion3.png");
+	if (!explosionTexture.loadFromFile("Assets/tank_explosion3.png"))
+	{
+		std::cerr << "Failed to load explosion texture!" << std::endl;
+	}
 
 	//Ground set up 
 	float groundHeight = 365.f; // You can adjust the height
@@ -51,8 +53,15 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	compassSprite.setPosition(sf::Vector2f(50.f, 10.f));
 	compassSprite.setRotation(sf::degrees(0.0f));        // Optional: adjust size
 
-	tankTextures[0].loadFromFile("Assets/tanks_tankDesert_body3.png");
-	tankTextures[1].loadFromFile("Assets/tanks_tankNavy_body3.png");
+	if (!tankTextures[0].loadFromFile("Assets/tanks_tankDesert_body3.png"))
+	{
+		std::cerr << "Failed to load desert tank texture!" << std::endl;
+	}
+
+	if (!tankTextures[1].loadFromFile("Assets/tanks_tankNavy_body3.png"))
+	{
+		std::cerr << "Failed to load navy tank texture!" << std::endl;
+	}
 
 	float bottomThirdY = screenSize.y * (2.0f / 3.0f) - tankTextures[0].getSize().y / 2.0f;
 
@@ -184,14 +193,23 @@ void LevelScreen::Update(float frameTime)
 
 	bool tabPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Tab);
 
+	// Trigger only when Tab is *just* pressed (not held)
 	if (tabPressed && !wasTabPressedLastFrame)
 	{
-		// Cycle through ammo types
-		int nextAmmo = static_cast<int>(currentAmmoType) + 1;
-		if (nextAmmo > static_cast<int>(AmmoType::Speed)) // Wrap around
-			nextAmmo = 0;
-		currentAmmoType = static_cast<AmmoType>(nextAmmo);
-		UpdateAmmoTypeText();
+		if (player == 0)
+		{
+			int nextAmmo = static_cast<int>(player1AmmoType) + 1;
+			if (nextAmmo > static_cast<int>(AmmoType::Speed)) nextAmmo = 0;
+			player1AmmoType = static_cast<AmmoType>(nextAmmo);
+		}
+		else
+		{
+			int nextAmmo = static_cast<int>(player2AmmoType) + 1;
+			if (nextAmmo > static_cast<int>(AmmoType::Speed)) nextAmmo = 0;
+			player2AmmoType = static_cast<AmmoType>(nextAmmo);
+		}
+
+		UpdateAmmoTypeText(); // Refresh display
 	}
 	wasTabPressedLastFrame = tabPressed;
 
@@ -364,23 +382,26 @@ void LevelScreen::SwitchTurn()
 
 Bullet* LevelScreen::SpawnBullet(sf::Vector2f pos, float speed, float angle, float windPower, sf::Vector2f velocity, Player* owner)
 {
-    Bullet* tempBullet = nullptr;
+	Bullet* tempBullet = nullptr;
 
-    switch (currentAmmoType)
-    {
-        case AmmoType::Normal:
-            tempBullet = new Bullet(bulletTex, speed, angle, windPower, velocity, pos, owner);
-            break;
-        case AmmoType::Explosive:
-            tempBullet = new ExplosiveBullet(explosiveBulletTex, speed, angle, windPower, velocity, pos, owner);
-            break;
-        case AmmoType::Speed:
-            tempBullet = new SpeedBullet(speedBulletTex, speed, angle, windPower, velocity, pos, owner);
-            break;
-    }
+	// Get the correct ammo type
+	AmmoType currentAmmoType = (player == 0) ? player1AmmoType : player2AmmoType;
 
-    bullets.push_back(tempBullet);
-    return tempBullet;
+	switch (currentAmmoType)
+	{
+	case AmmoType::Normal:
+		tempBullet = new Bullet(bulletTex, speed, angle, windPower, velocity, pos, owner);
+		break;
+	case AmmoType::Explosive:
+		tempBullet = new ExplosiveBullet(explosiveBulletTex, speed, angle, windPower, velocity, pos, owner);
+		break;
+	case AmmoType::Speed:
+		tempBullet = new SpeedBullet(speedBulletTex, speed, angle, windPower, velocity, pos, owner);
+		break;
+	}
+
+	bullets.push_back(tempBullet);
+	return tempBullet;
 }
 
 void LevelScreen::GenerateRandomWind()
@@ -419,19 +440,26 @@ void LevelScreen::RestartGame()
 
 void LevelScreen::UpdateAmmoTypeText()
 {
-	std::string typeName;
-	switch (currentAmmoType)
+	std::string name1, name2;
+
+	switch (player1AmmoType)
 	{
-	case AmmoType::Normal:    typeName = "Normal"; break;
-	case AmmoType::Explosive: typeName = "Explosive"; break;
-	case AmmoType::Speed:     typeName = "Speed"; break;
+	case AmmoType::Normal:    name1 = "Normal"; break;
+	case AmmoType::Explosive: name1 = "Explosive"; break;
+	case AmmoType::Speed:     name1 = "Speed"; break;
 	}
 
-	if (ismyPlayerTurn)
-		player1AmmoText.setString("Player 1 Ammo: " + typeName);
-	else
-		player2AmmoText.setString("Player 2 Ammo: " + typeName);
+	switch (player2AmmoType)
+	{
+	case AmmoType::Normal:    name2 = "Normal"; break;
+	case AmmoType::Explosive: name2 = "Explosive"; break;
+	case AmmoType::Speed:     name2 = "Speed"; break;
+	}
+
+	player1AmmoText.setString("P1 Ammo: " + name1);
+	player2AmmoText.setString("P2 Ammo: " + name2);
 }
+
 
 
 
