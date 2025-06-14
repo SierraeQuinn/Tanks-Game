@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "Player.h"
 #include "Bullet.h"
+#include <SFML/Audio.hpp>
 #include "ExplosionEffect.h"
 
 
@@ -38,6 +39,8 @@ public:
 	void RestartGame();
 	float GetWindPower() const { return windPower; }
 	void UpdateAmmoTypeText();
+	sf::SoundBuffer explosionBuffer;
+	sf::Sound explosionSound;
 
 
 private:
@@ -75,6 +78,7 @@ private:
 	sf::Text player2AmmoText;
 	sf::Vector2f startingPos1;
 	sf::Vector2f startingPos2;
+
 	
 	
 

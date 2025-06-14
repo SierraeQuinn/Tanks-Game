@@ -5,6 +5,7 @@
 #include "SpeedBullet.h"
 #include "ExplosionEffect.h"
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <cstdlib> // for rand()
 #include <ctime>   // for time()
 #include <iostream>
@@ -17,6 +18,9 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	, speedBulletTex("Assets/tank_bullet6.png")
 	, compassTexture("Assets/Compass.png")
 	, compassSprite(compassTexture)
+	,explosionBuffer("Assets/explosionCrunch_000.ogg")
+	,explosionSound(explosionBuffer)
+	
 
 	//--
 	, uiFont("Assets/Quantico-Regular.ttf")
@@ -62,6 +66,10 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	{
 		std::cerr << "Failed to load navy tank texture!" << std::endl;
 	}
+	
+	explosionSound.setBuffer(explosionBuffer);
+
+	
 
 	float bottomThirdY = screenSize.y * (2.0f / 3.0f) - tankTextures[0].getSize().y / 2.0f;
 
@@ -105,7 +113,7 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	turnText.setFillColor(sf::Color::Black);
 	turnText.setPosition({ screenSize.x / 2.f - 80.f, 10.f }); // Adjust as needed
 	turnText.setString("Player 1's Turn");
-#
+
 	// Generate random wind on startup
 	GenerateRandomWind();
 
@@ -234,6 +242,7 @@ void LevelScreen::Update(float frameTime)
 			if (dynamic_cast<ExplosiveBullet*>(bullets[i])) 
 			{
 				explosions.emplace_back(explosionTexture, bullets[i]->GetPosition());
+				explosionSound.play();
 			}
 
 			delete bullets[i];
@@ -262,6 +271,7 @@ void LevelScreen::Update(float frameTime)
 			if (dynamic_cast<ExplosiveBullet*>(bullets[i])) 
 			{
 				explosions.emplace_back(explosionTexture, bullets[i]->GetPosition());
+				explosionSound.play();
 			}
 
 			delete bullets[i];
