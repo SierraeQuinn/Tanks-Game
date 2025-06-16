@@ -33,6 +33,10 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 	, turnText(uiFont)
 	, player1AmmoText(uiFont)
 	, player2AmmoText(uiFont)
+	, p1QuickBulletAmmo(8)
+	, p1ExplosiveAmmo(3)
+	, p2QuickBulletAmmo(8)
+	, p2ExplosiveAmmo(3)
 	//--
 
 	, timeSinceSpawn(0.0f)
@@ -119,7 +123,7 @@ LevelScreen::LevelScreen(sf::Vector2f newScreenSize)
 
 	player1healthText.setCharacterSize(24);
 	player1healthText.setFillColor(sf::Color::White);
-	player1healthText.setString(" Player 1 Health: " + std::to_string(myPlayer->GetHealth()));
+	
 	player1healthText.setPosition({ 50.f, bottomThirdY + 70.f });
 
 	player1AmmoText.setFont(uiFont);
@@ -190,6 +194,8 @@ void LevelScreen::DrawTo(sf::RenderTarget& target)
 
 void LevelScreen::Update(float frameTime)
 {
+	player1healthText.setString(" Player 1 Health: " + std::to_string(myPlayer->GetHealth()));
+
 	if (gameOver)
 	{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter))
@@ -392,6 +398,9 @@ void LevelScreen::SwitchTurn()
 
 Bullet* LevelScreen::SpawnBullet(sf::Vector2f pos, float speed, float angle, float windPower, sf::Vector2f velocity, Player* owner)
 {
+	if (!bullets.empty())
+		return 0;
+
 	Bullet* tempBullet = nullptr;
 
 	// Get the correct ammo type
@@ -403,10 +412,56 @@ Bullet* LevelScreen::SpawnBullet(sf::Vector2f pos, float speed, float angle, flo
 		tempBullet = new Bullet(bulletTex, speed, angle, windPower, velocity, pos, owner);
 		break;
 	case AmmoType::Explosive:
+		
+		if (player == 0)
+		{
+			if (p1ExplosiveAmmo <= 0)
+			{
+				player1AmmoType = AmmoType::Normal;
+				UpdateAmmoTypeText();
+				return SpawnBullet(pos, speed, angle, windPower, velocity, owner); // Retry with Normal
+			}
+			p1ExplosiveAmmo--;
+		}
+		else
+		{
+			if (p2ExplosiveAmmo <= 0)
+			{
+				player2AmmoType = AmmoType::Normal;
+				UpdateAmmoTypeText();
+				return SpawnBullet(pos, speed, angle, windPower, velocity, owner); // Retry with Normal
+			}
+			p2ExplosiveAmmo--;
+		}
 		tempBullet = new ExplosiveBullet(explosiveBulletTex, speed, angle, windPower, velocity, pos, owner);
+
+		
+		
 		break;
 	case AmmoType::Speed:
+
+		if (player == 0)
+		{
+			if (p1QuickBulletAmmo <= 0)
+			{
+				player1AmmoType = AmmoType::Normal;
+				UpdateAmmoTypeText();
+				return SpawnBullet(pos, speed, angle, windPower, velocity, owner); // Retry with Normal
+			}
+			p1QuickBulletAmmo--;
+		}
+		else
+		{
+			if (p2QuickBulletAmmo <= 0)
+			{
+				player2AmmoType = AmmoType::Normal;
+				UpdateAmmoTypeText();
+				return SpawnBullet(pos, speed, angle, windPower, velocity, owner); // Retry with Normal
+			}
+			p2QuickBulletAmmo--;
+		}
 		tempBullet = new SpeedBullet(speedBulletTex, speed, angle, windPower, velocity, pos, owner);
+		
 		break;
 	}
 
@@ -446,6 +501,11 @@ void LevelScreen::RestartGame()
 
 	player1healthText.setString("Health: 100");
 	player2healthText.setString("Health: 100");
+
+	p1QuickBulletAmmo = 8;
+	p1ExplosiveAmmo = 3;
+	p2QuickBulletAmmo = 8;
+	p2ExplosiveAmmo = 3;
 }
 
 void LevelScreen::UpdateAmmoTypeText()
@@ -454,16 +514,22 @@ void LevelScreen::UpdateAmmoTypeText()
 
 	switch (player1AmmoType)
 	{
-	case AmmoType::Normal:    name1 = "Normal"; break;
-	case AmmoType::Explosive: name1 = "Explosive"; break;
-	case AmmoType::Speed:     name1 = "Speed"; break;
+	case AmmoType::Normal:    name1 = "Normal"; 
+		break;
+	case AmmoType::Explosive: name1 = "Explosive(" + std::to_string(p1ExplosiveAmmo) + ")"; 
+		break;
+	case AmmoType::Speed:     name1 = "Speed (" + std::to_string(p1QuickBulletAmmo) + ")";
+		break;
 	}
 
 	switch (player2AmmoType)
 	{
-	case AmmoType::Normal:    name2 = "Normal"; break;
-	case AmmoType::Explosive: name2 = "Explosive"; break;
-	case AmmoType::Speed:     name2 = "Speed"; break;
+	case AmmoType::Normal:    name2 = "Normal";
+		break;
+	case AmmoType::Explosive: name2 = "Explosive (" + std::to_string(p2ExplosiveAmmo) + ")"; 
+		break;
+	case AmmoType::Speed:     name2 = "Speed(" + std::to_string(p2QuickBulletAmmo) + ")";
+		break;
 	}
 
 	player1AmmoText.setString("P1 Ammo: " + name1);

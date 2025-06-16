@@ -79,6 +79,11 @@ private:
 	sf::Vector2f startingPos1;
 	sf::Vector2f startingPos2;
 
+	int p1QuickBulletAmmo;
+	int p1ExplosiveAmmo;
+	int p2QuickBulletAmmo;
+	int p2ExplosiveAmmo;
+
 	
 	
 
