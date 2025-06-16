@@ -13,4 +13,5 @@ public:
         Player* owner);
 
     void Update(float frameTime) override;
+    void DealDamage(std::vector<Player*>& players);
 };
